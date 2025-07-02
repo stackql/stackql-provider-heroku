@@ -1,0 +1,334 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Spaces
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /spaces:
+    get:
+      summary: List
+      description: List existing spaces.
+      operationId: spaceList
+      tags:
+      - spaces
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/space'
+                type:
+                - array
+      x-stackQL-resource: space
+      x-stackQL-method: List
+      x-stackQL-verb: select
+    post:
+      summary: Create
+      description: Create a new space.
+      operationId: spaceCreate
+      tags:
+      - spaces
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/space'
+      x-stackQL-resource: space
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+                team:
+                  $ref: '#/components/schemas/name'
+                region:
+                  $ref: '#/components/schemas/identity'
+                shield:
+                  $ref: '#/components/schemas/shield'
+                cidr:
+                  $ref: '#/components/schemas/cidr'
+                data_cidr:
+                  $ref: '#/components/schemas/data_cidr'
+                log_drain_url:
+                  $ref: '#/components/schemas/log_drain_url'
+                generation:
+                  description: unique name of the generation of the Heroku platform for this space
+                  example: cedar
+                  readOnly: true
+                  type:
+                  - string
+              required:
+              - name
+              - team
+              type:
+              - object
+  /spaces/{space_identity}:
+    get:
+      summary: Info
+      description: Info for existing space.
+      operationId: spaceInfo
+      tags:
+      - spaces
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/space'
+      x-stackQL-resource: space
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update an existing space.
+      operationId: spaceUpdate
+      tags:
+      - spaces
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/space'
+      x-stackQL-resource: space
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+              type:
+              - object
+    delete:
+      summary: Delete
+      description: Delete an existing space.
+      operationId: spaceDelete
+      tags:
+      - spaces
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: space
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+components:
+  schemas:
+    space:
+      description: A space is an isolated, highly available, secure app execution environment.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        organization:
+          description: organization that owns this space
+          properties:
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        team:
+          description: team that owns this space
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        region:
+          description: identity of space region
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        shield:
+          $ref: '#/components/schemas/shield'
+        state:
+          $ref: '#/components/schemas/state'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        cidr:
+          $ref: '#/components/schemas/cidr'
+        data_cidr:
+          $ref: '#/components/schemas/data_cidr'
+        generation:
+          $ref: '#/components/schemas/generation'
+    created_at:
+      description: when space was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    id:
+      description: unique identifier of space
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    name:
+      description: unique name of space
+      readOnly: false
+      pattern: ^[a-z0-9](?:[a-z0-9]|-(?!-))+[a-z0-9]$
+      type:
+      - string
+    shield:
+      description: true if this space has shield enabled
+      readOnly: true
+      type:
+      - boolean
+    state:
+      description: availability of this space
+      enum:
+      - allocating
+      - allocated
+      - deleting
+      readOnly: true
+      type:
+      - string
+    updated_at:
+      description: when space was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    cidr:
+      description: The RFC-1918 CIDR the Private Space will use. It must be a /16 in 10.0.0.0/8, 172.16.0.0/12 or 192.168.0.0/16
+      default: 10.0.0.0/16
+      pattern: ^((?:10|172\.(?:1[6-9]|2[0-9]|3[01])|192\.168)\..*.+\/16)$
+      readOnly: false
+      type:
+      - string
+    data_cidr:
+      description: The RFC-1918 CIDR that the Private Space will use for the Heroku-managed peering connection that's automatically
+        created when using Heroku Data add-ons. It must be between a /16 and a /20
+      readOnly: false
+      type:
+      - string
+    generation:
+      description: Generation of the Heroku platform for this space
+      readOnly: true
+      type:
+      - object
+      properties:
+        id:
+          description: unique identifier of the generation of the Heroku platform for this space
+          format: uuid
+          readOnly: true
+          type:
+          - string
+        name:
+          description: unique name of the generation of the Heroku platform for this space
+          readOnly: true
+          type:
+          - string
+    identity:
+      anyOf:
+      - $ref: '#/components/schemas/id'
+      - $ref: '#/components/schemas/name'
+    log_drain_url:
+      description: URL to which all apps will drain logs. Only settable during space creation and enables direct logging.
+        Must use HTTPS.
+      type:
+      - string
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    space:
+      id: heroku.spaces.space
+      name: space
+      title: Space
+      methods:
+        List:
+          operation:
+            $ref: '#/paths/~1spaces/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Create:
+          operation:
+            $ref: '#/paths/~1spaces/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        Info:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/space/methods/List'
+        - $ref: '#/components/x-stackQL-resources/space/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/space/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/space/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/space/methods/Delete'
+        exec: []
+security:
+- herokuAuth: []

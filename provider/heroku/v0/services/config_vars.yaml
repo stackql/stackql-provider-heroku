@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Config Vars
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /apps/{app_identity}/config-vars:
+    get:
+      summary: Info for App
+      description: Get config-vars for app.
+      operationId: config_varInfoForApp
+      tags:
+      - config_vars
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_vars'
+      x-stackQL-resource: config-var
+      x-stackQL-method: InfoForApp
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update config-vars for app. You can update existing config-vars by setting them again, and remove by setting
+        it to `null`.
+      operationId: config_varUpdate
+      tags:
+      - config_vars
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_vars'
+      x-stackQL-resource: config-var
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              description: "hash of config changes \xE2\u20AC\u201C update values or delete by seting it to `null`"
+              example:
+                FOO: bar
+                BAZ: qux
+              patternProperties:
+                ^\w+$:
+                  type:
+                  - string
+                  - 'null'
+              type:
+              - object
+  /apps/{app_identity}/releases/{release_identity}/config-vars:
+    get:
+      summary: Info for App Release
+      description: Get config-vars for a release.
+      operationId: config_varInfoForAppRelease
+      tags:
+      - config_vars
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: release_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of release.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_vars'
+      x-stackQL-resource: config-var
+      x-stackQL-method: InfoForAppRelease
+      x-stackQL-verb: select
+components:
+  schemas:
+    config_vars:
+      additionalProperties: false
+      description: hash of config vars
+      patternProperties:
+        ^\w+$:
+          type:
+          - string
+          - 'null'
+      type:
+      - object
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    config-var:
+      id: heroku.config_vars.config-var
+      name: config-var
+      title: Config Var
+      methods:
+        InfoForApp:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1config-vars/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1config-vars/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        InfoForAppRelease:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1releases~1{release_identity}~1config-vars/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/config-var/methods/InfoForApp'
+        - $ref: '#/components/x-stackQL-resources/config-var/methods/InfoForAppRelease'
+        insert: []
+        update:
+        - $ref: '#/components/x-stackQL-resources/config-var/methods/Update'
+        delete: []
+        exec: []
+security:
+- herokuAuth: []

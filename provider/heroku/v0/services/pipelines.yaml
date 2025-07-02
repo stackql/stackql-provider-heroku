@@ -1,0 +1,921 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Pipelines
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /pipelines/{pipeline_id}/pipeline-couplings:
+    get:
+      summary: List By Pipeline
+      description: List couplings for a pipeline
+      operationId: pipeline_couplingListByPipeline
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for id of pipeline.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/pipeline-coupling'
+                type:
+                - array
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: ListByPipeline
+      x-stackQL-verb: select
+  /users/~/pipeline-couplings:
+    get:
+      summary: List By Current User
+      description: List pipeline couplings for the current user.
+      operationId: pipeline_couplingListByCurrentUser
+      tags:
+      - pipelines
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/pipeline-coupling'
+                type:
+                - array
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: ListByCurrentUser
+      x-stackQL-verb: select
+  /pipeline-couplings:
+    get:
+      summary: List
+      description: List pipeline couplings.
+      operationId: pipeline_couplingList
+      tags:
+      - pipelines
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/pipeline-coupling'
+                type:
+                - array
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: List
+      x-stackQL-verb: select
+    post:
+      summary: Create
+      description: Create a new pipeline coupling.
+      operationId: pipeline_couplingCreate
+      tags:
+      - pipelines
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-coupling'
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                app:
+                  $ref: '#/components/schemas/identity'
+                pipeline:
+                  $ref: '#/components/schemas/id'
+                stage:
+                  $ref: '#/components/schemas/stage'
+              required:
+              - app
+              - pipeline
+              - stage
+              type:
+              - object
+  /teams/{team_identity}/pipeline-couplings:
+    get:
+      summary: List By Team
+      description: List pipeline couplings for a team.
+      operationId: pipeline_couplingListByTeam
+      tags:
+      - pipelines
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/pipeline-coupling'
+                type:
+                - array
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: ListByTeam
+      x-stackQL-verb: select
+  /pipeline-couplings/{pipeline_coupling_identity}:
+    get:
+      summary: Info
+      description: Info for an existing pipeline coupling.
+      operationId: pipeline_couplingInfo
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_coupling_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of pipeline-coupling.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-coupling'
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    delete:
+      summary: Delete
+      description: Delete an existing pipeline coupling.
+      operationId: pipeline_couplingDelete
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_coupling_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of pipeline-coupling.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    patch:
+      summary: Update
+      description: Update an existing pipeline coupling.
+      operationId: pipeline_couplingUpdate
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_coupling_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of pipeline-coupling.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-coupling'
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                stage:
+                  $ref: '#/components/schemas/stage'
+              type:
+              - object
+  /apps/{app_identity}/pipeline-couplings:
+    get:
+      summary: Info By App
+      description: Info for an existing pipeline coupling.
+      operationId: pipeline_couplingInfoByApp
+      tags:
+      - pipelines
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-coupling'
+      x-stackQL-resource: pipeline-coupling
+      x-stackQL-method: InfoByApp
+      x-stackQL-verb: select
+  /pipelines/{pipeline_id}/latest-deployments:
+    get:
+      summary: List
+      description: List latest deployments for each app in a pipeline. A deployment is a release that changed your source
+        slug, container image, or Heroku processes.
+      operationId: pipeline_deploymentList
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for id of pipeline.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/release'
+                type:
+                - array
+      x-stackQL-resource: pipeline-deployment
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /pipeline-promotions:
+    post:
+      summary: Create
+      description: Create a new promotion.
+      operationId: pipeline_promotionCreate
+      tags:
+      - pipelines
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-promotion'
+      x-stackQL-resource: pipeline-promotion
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                pipeline:
+                  description: pipeline involved in the promotion
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/id'
+                  required:
+                  - id
+                  type:
+                  - object
+                source:
+                  description: the app being promoted from
+                  properties:
+                    app:
+                      description: the app which was promoted from
+                      properties:
+                        id:
+                          $ref: '#/components/schemas/id'
+                      strictProperties: true
+                      type:
+                      - object
+                  type:
+                  - object
+                targets:
+                  items:
+                    properties:
+                      app:
+                        description: the app is being promoted to
+                        properties:
+                          id:
+                            $ref: '#/components/schemas/id'
+                        strictProperties: true
+                        type:
+                        - object
+                    type:
+                    - object
+                  type:
+                  - array
+              required:
+              - pipeline
+              - source
+              - targets
+              type:
+              - object
+  /pipeline-promotions/{pipeline_promotion_identity}:
+    get:
+      summary: Info
+      description: Info for existing pipeline promotion.
+      operationId: pipeline_promotionInfo
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_promotion_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of pipeline-promotion.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline-promotion'
+      x-stackQL-resource: pipeline-promotion
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /pipelines/{pipeline_id}/latest-releases:
+    get:
+      summary: List
+      description: List latest releases for each app in a pipeline
+      operationId: pipeline_releaseList
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for id of pipeline.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/release'
+                type:
+                - array
+      x-stackQL-resource: pipeline-release
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /pipelines:
+    post:
+      summary: Create
+      description: Create a new pipeline.
+      operationId: pipelineCreate
+      tags:
+      - pipelines
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline'
+      x-stackQL-resource: pipeline
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+                owner:
+                  description: Pipeline owner
+                  $ref: '#/components/schemas/owner'
+                  type:
+                  - object
+                  - 'null'
+              required:
+              - name
+              type:
+              - object
+    get:
+      summary: List
+      description: List existing pipelines.
+      operationId: pipelineList
+      tags:
+      - pipelines
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/pipeline'
+                type:
+                - array
+      x-stackQL-resource: pipeline
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /pipelines/{pipeline_identity}:
+    get:
+      summary: Info
+      description: Info for existing pipeline.
+      operationId: pipelineInfo
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of pipeline.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline'
+      x-stackQL-resource: pipeline
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /pipelines/{pipeline_id}:
+    delete:
+      summary: Delete
+      description: Delete an existing pipeline.
+      operationId: pipelineDelete
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for id of pipeline.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: pipeline
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    patch:
+      summary: Update
+      description: Update an existing pipeline.
+      operationId: pipelineUpdate
+      tags:
+      - pipelines
+      parameters:
+      - name: pipeline_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for id of pipeline.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline'
+      x-stackQL-resource: pipeline
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+              type:
+              - object
+components:
+  schemas:
+    pipeline-coupling:
+      description: Information about an app's coupling to a pipeline
+      type:
+      - object
+      properties:
+        app:
+          description: app involved in the pipeline coupling
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        pipeline:
+          description: pipeline involved in the coupling
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        stage:
+          $ref: '#/components/schemas/stage'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    id:
+      description: unique identifier of app
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    created_at:
+      description: when pipeline coupling was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    stage:
+      description: target pipeline stage
+      enum:
+      - test
+      - review
+      - development
+      - staging
+      - production
+      type:
+      - string
+    updated_at:
+      description: when pipeline coupling was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    identity:
+      anyOf:
+      - $ref: '#/components/schemas/id'
+      - $ref: '#/components/schemas/name'
+    release:
+      description: A release represents a combination of code, config vars and add-ons for an app on Heroku.
+      type:
+      - object
+      properties:
+        addon_plan_names:
+          description: add-on plans installed on the app for this release
+          type:
+          - array
+          items:
+            $ref: '#/components/schemas/name'
+        artifacts:
+          description: build artifacts for the release
+          type:
+          - array
+          items:
+            $ref: '#/components/schemas/artifact'
+        app:
+          description: app involved in the release
+          properties:
+            name:
+              $ref: '#/components/schemas/name'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        description:
+          $ref: '#/components/schemas/description'
+        id:
+          $ref: '#/components/schemas/id'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        slug:
+          description: slug running in this release
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+          - 'null'
+        status:
+          $ref: '#/components/schemas/status'
+        user:
+          description: user that created the release
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            email:
+              $ref: '#/components/schemas/email'
+          type:
+          - object
+        version:
+          $ref: '#/components/schemas/version'
+        current:
+          $ref: '#/components/schemas/current'
+        output_stream_url:
+          $ref: '#/components/schemas/output_stream_url'
+        eligible_for_rollback:
+          $ref: '#/components/schemas/eligible_for_rollback'
+    pipeline-promotion:
+      description: Promotions allow you to move code from an app in a pipeline to all targets
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        pipeline:
+          description: the pipeline which the promotion belongs to
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        source:
+          description: the app being promoted from
+          properties:
+            app:
+              description: the app which was promoted from
+              properties:
+                id:
+                  $ref: '#/components/schemas/id'
+              type:
+              - object
+            release:
+              description: the release used to promoted from
+              properties:
+                id:
+                  $ref: '#/components/schemas/id'
+              type:
+              - object
+          type:
+          - object
+        status:
+          $ref: '#/components/schemas/status'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    status:
+      description: status of promotion
+      readOnly: true
+      enum:
+      - pending
+      - completed
+      type:
+      - string
+    pipeline:
+      description: A pipeline allows grouping of apps into different stages.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        owner:
+          $ref: '#/components/schemas/owner'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        generation:
+          $ref: '#/components/schemas/generation'
+    name:
+      description: name of pipeline
+      pattern: ^[a-z][a-z0-9-]{2,29}$
+      readOnly: false
+      type:
+      - string
+    owner:
+      description: Owner of a pipeline.
+      properties:
+        id:
+          $ref: '#/components/schemas/owner'
+        type:
+          $ref: '#/components/schemas/owner'
+      required:
+      - id
+      - type
+      type:
+      - object
+      - 'null'
+    generation:
+      description: the generation of the Heroku platform for this pipeline
+      properties:
+        id:
+          $ref: '#/components/schemas/generation'
+        name:
+          $ref: '#/components/schemas/generation'
+      type:
+      - object
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    pipeline-coupling:
+      id: heroku.pipelines.pipeline-coupling
+      name: pipeline-coupling
+      title: Pipeline Coupling
+      methods:
+        ListByPipeline:
+          operation:
+            $ref: '#/paths/~1pipelines~1{pipeline_id}~1pipeline-couplings/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        ListByCurrentUser:
+          operation:
+            $ref: '#/paths/~1users~1~~1pipeline-couplings/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1pipeline-couplings/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Create:
+          operation:
+            $ref: '#/paths/~1pipeline-couplings/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        ListByTeam:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1pipeline-couplings/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Info:
+          operation:
+            $ref: '#/paths/~1pipeline-couplings~1{pipeline_coupling_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1pipeline-couplings~1{pipeline_coupling_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Update:
+          operation:
+            $ref: '#/paths/~1pipeline-couplings~1{pipeline_coupling_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        InfoByApp:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1pipeline-couplings/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/ListByPipeline'
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/ListByCurrentUser'
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/List'
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/ListByTeam'
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/InfoByApp'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/pipeline-coupling/methods/Delete'
+        exec: []
+    pipeline-deployment:
+      id: heroku.pipelines.pipeline-deployment
+      name: pipeline-deployment
+      title: Pipeline Deployment
+      methods:
+        List:
+          operation:
+            $ref: '#/paths/~1pipelines~1{pipeline_id}~1latest-deployments/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/pipeline-deployment/methods/List'
+        insert: []
+        update: []
+        delete: []
+        exec: []
+    pipeline-promotion:
+      id: heroku.pipelines.pipeline-promotion
+      name: pipeline-promotion
+      title: Pipeline Promotion
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1pipeline-promotions/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        Info:
+          operation:
+            $ref: '#/paths/~1pipeline-promotions~1{pipeline_promotion_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/pipeline-promotion/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/pipeline-promotion/methods/Create'
+        update: []
+        delete: []
+        exec: []
+    pipeline-release:
+      id: heroku.pipelines.pipeline-release
+      name: pipeline-release
+      title: Pipeline Release
+      methods:
+        List:
+          operation:
+            $ref: '#/paths/~1pipelines~1{pipeline_id}~1latest-releases/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/pipeline-release/methods/List'
+        insert: []
+        update: []
+        delete: []
+        exec: []
+    pipeline:
+      id: heroku.pipelines.pipeline
+      name: pipeline
+      title: Pipeline
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1pipelines/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1pipelines/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Info:
+          operation:
+            $ref: '#/paths/~1pipelines~1{pipeline_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1pipelines~1{pipeline_id}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Update:
+          operation:
+            $ref: '#/paths/~1pipelines~1{pipeline_id}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/pipeline/methods/List'
+        - $ref: '#/components/x-stackQL-resources/pipeline/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/pipeline/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/pipeline/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/pipeline/methods/Delete'
+        exec: []
+security:
+- herokuAuth: []

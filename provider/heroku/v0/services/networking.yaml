@@ -1,0 +1,552 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Networking
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /spaces/{space_identity}/peerings:
+    get:
+      summary: List
+      description: List peering connections of a private space.
+      operationId: peeringList
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/peering'
+                type:
+                - array
+      x-stackQL-resource: peering
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /spaces/{space_identity}/peerings/{peering_pcx_id}/actions/accept:
+    post:
+      summary: Accept
+      description: Accept a pending peering connection with a private space.
+      operationId: peeringAccept
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      - name: peering_pcx_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for pcx_id of peering.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/peering'
+      x-stackQL-resource: peering
+      x-stackQL-method: Accept
+      x-stackQL-verb: exec
+  /spaces/{space_identity}/peerings/{peering_pcx_id}:
+    delete:
+      summary: Destroy
+      description: Destroy an active peering connection with a private space.
+      operationId: peeringDestroy
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      - name: peering_pcx_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for pcx_id of peering.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: peering
+      x-stackQL-method: Destroy
+      x-stackQL-verb: exec
+    get:
+      summary: Info
+      description: Fetch information for existing peering connection
+      operationId: peeringInfo
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      - name: peering_pcx_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for pcx_id of peering.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/peering'
+      x-stackQL-resource: peering
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /spaces/{space_identity}/vpn-connections:
+    post:
+      summary: Create
+      description: Create a new VPN connection in a private space.
+      operationId: vpn_connectionCreate
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vpn-connection'
+      x-stackQL-resource: vpn-connection
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+                public_ip:
+                  $ref: '#/components/schemas/public_ip'
+                routable_cidrs:
+                  $ref: '#/components/schemas/routable_cidrs'
+              required:
+              - name
+              - public_ip
+              - routable_cidrs
+              type:
+              - object
+    get:
+      summary: List
+      description: List VPN connections for a space.
+      operationId: vpn_connectionList
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/vpn-connection'
+                type:
+                - array
+      x-stackQL-resource: vpn-connection
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /spaces/{space_identity}/vpn-connections/{vpn_connection_identity}:
+    delete:
+      summary: Destroy
+      description: Destroy existing VPN Connection
+      operationId: vpn_connectionDestroy
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      - name: vpn_connection_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of vpn-connection.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: vpn-connection
+      x-stackQL-method: Destroy
+      x-stackQL-verb: exec
+    get:
+      summary: Info
+      description: Info for an existing vpn-connection.
+      operationId: vpn_connectionInfo
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      - name: vpn_connection_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of vpn-connection.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vpn-connection'
+      x-stackQL-resource: vpn-connection
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update a VPN connection in a private space.
+      operationId: vpn_connectionUpdate
+      tags:
+      - networking
+      parameters:
+      - name: space_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of space.
+      - name: vpn_connection_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of vpn-connection.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vpn-connection'
+      x-stackQL-resource: vpn-connection
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                routable_cidrs:
+                  $ref: '#/components/schemas/routable_cidrs'
+              required:
+              - routable_cidrs
+              type:
+              - object
+components:
+  schemas:
+    peering:
+      description: '[Peering](https://devcenter.heroku.com/articles/private-space-peering) provides a way to peer your Private
+        Space VPC to another AWS VPC.'
+      type:
+      - object
+      properties:
+        type:
+          $ref: '#/components/schemas/type'
+        pcx_id:
+          $ref: '#/components/schemas/pcx_id'
+        cidr_blocks:
+          description: The CIDR blocks of the peer.
+          type:
+          - array
+          items:
+            $ref: '#/components/schemas/cidr'
+        status:
+          $ref: '#/components/schemas/status'
+        aws_vpc_id:
+          $ref: '#/components/schemas/vpc_id'
+        aws_region:
+          $ref: '#/components/schemas/aws_region'
+        aws_account_id:
+          $ref: '#/components/schemas/aws_account_id'
+        expires:
+          $ref: '#/components/schemas/expires'
+    type:
+      description: The type of peering connection.
+      type:
+      - string
+      enum:
+      - heroku-managed
+      - customer-managed
+      - unknown
+    pcx_id:
+      description: The AWS VPC Peering Connection ID of the peering.
+      readOnly: true
+      type:
+      - string
+    cidr:
+      description: An IP address and the number of significant bits that make up the routing or networking portion.
+      type:
+      - string
+    status:
+      description: The status of the peering connection.
+      enum:
+      - initiating-request
+      - pending-acceptance
+      - provisioning
+      - active
+      - failed
+      - expired
+      - rejected
+      - deleted
+      type:
+      - string
+      readOnly: true
+    vpc_id:
+      description: The AWS VPC ID of the peer.
+      readOnly: true
+      type:
+      - string
+    aws_region:
+      description: The AWS region of the peer connection.
+      readOnly: true
+      type:
+      - string
+    aws_account_id:
+      description: The AWS account ID of your Private Space.
+      readOnly: true
+      type:
+      - string
+    expires:
+      description: When a peering connection will expire.
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    vpn-connection:
+      description: '[VPN](https://devcenter.heroku.com/articles/private-space-vpn-connection) provides a way to connect your
+        Private Spaces to your network via VPN.'
+      type:
+      - object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        public_ip:
+          $ref: '#/components/schemas/public_ip'
+        routable_cidrs:
+          $ref: '#/components/schemas/routable_cidrs'
+        space_cidr_block:
+          $ref: '#/components/schemas/space_cidr_block'
+        tunnels:
+          items:
+            $ref: '#/components/schemas/tunnel'
+          type:
+          - array
+        ike_version:
+          $ref: '#/components/schemas/ike_version'
+        status:
+          $ref: '#/components/schemas/status'
+        status_message:
+          $ref: '#/components/schemas/status_message'
+    id:
+      description: VPN ID
+      readOnly: true
+      type:
+      - string
+    name:
+      description: VPN Name
+      type:
+      - string
+    public_ip:
+      description: Public IP of VPN customer gateway
+      type:
+      - string
+    routable_cidrs:
+      description: Routable CIDRs of VPN
+      type:
+      - array
+      items:
+        type:
+        - string
+    space_cidr_block:
+      description: CIDR Block of the Private Space
+      readOnly: true
+      type:
+      - string
+    tunnel:
+      description: Tunnel info
+      readOnly: true
+      type:
+      - object
+      properties:
+        last_status_change:
+          description: Timestamp of last status changed
+          type:
+          - string
+        ip:
+          description: Public IP address for the tunnel
+          type:
+          - string
+        customer_ip:
+          description: Public IP address for the customer side of the tunnel
+          type:
+          - string
+        pre_shared_key:
+          description: Pre-shared key
+          type:
+          - string
+        status:
+          description: Status of the tunnel
+          enum:
+          - UP
+          - DOWN
+          type:
+          - string
+        status_message:
+          description: Details of the status
+          type:
+          - string
+    ike_version:
+      description: IKE Version
+      readOnly: true
+      type:
+      - integer
+    status_message:
+      description: Details of the status
+      readOnly: true
+      type:
+      - string
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    peering:
+      id: heroku.networking.peering
+      name: peering
+      title: Peering
+      methods:
+        List:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1peerings/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Accept:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1peerings~1{peering_pcx_id}~1actions~1accept/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Destroy:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1peerings~1{peering_pcx_id}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1peerings~1{peering_pcx_id}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/peering/methods/List'
+        - $ref: '#/components/x-stackQL-resources/peering/methods/Info'
+        insert: []
+        update: []
+        delete: []
+        exec:
+        - $ref: '#/components/x-stackQL-resources/peering/methods/Accept'
+        - $ref: '#/components/x-stackQL-resources/peering/methods/Destroy'
+    vpn-connection:
+      id: heroku.networking.vpn-connection
+      name: vpn-connection
+      title: Vpn Connection
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1vpn-connections/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1vpn-connections/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Destroy:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1vpn-connections~1{vpn_connection_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1vpn-connections~1{vpn_connection_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1spaces~1{space_identity}~1vpn-connections~1{vpn_connection_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/vpn-connection/methods/List'
+        - $ref: '#/components/x-stackQL-resources/vpn-connection/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/vpn-connection/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/vpn-connection/methods/Update'
+        delete: []
+        exec:
+        - $ref: '#/components/x-stackQL-resources/vpn-connection/methods/Destroy'
+security:
+- herokuAuth: []

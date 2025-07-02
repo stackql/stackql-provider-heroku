@@ -1,0 +1,1297 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Teams
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /teams/{team_identity}/features/{team_feature_identity}:
+    get:
+      summary: Info
+      description: Info for an existing team feature.
+      operationId: team_featureInfo
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      - name: team_feature_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team-feature.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-feature'
+      x-stackQL-resource: team-feature
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /teams/{team_identity}/features:
+    get:
+      summary: List
+      description: List existing team features.
+      operationId: team_featureList
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/team-feature'
+                type:
+                - array
+      x-stackQL-resource: team-feature
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /teams/{team_name}/invitations:
+    get:
+      summary: List
+      description: Get a list of a team's Identity Providers
+      operationId: team_invitationList
+      tags:
+      - teams
+      parameters:
+      - name: team_name
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for name of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/team-invitation'
+                type:
+                - array
+      x-stackQL-resource: team-invitation
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /teams/{team_identity}/invitations:
+    put:
+      summary: Create
+      description: Create Team Invitation
+      operationId: team_invitationCreate
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-invitation'
+      x-stackQL-resource: team-invitation
+      x-stackQL-method: Create
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  $ref: '#/components/schemas/email'
+                role:
+                  $ref: '#/components/schemas/role'
+              required:
+              - email
+              - role
+              type:
+              - object
+  /teams/{team_identity}/invitations/{team_invitation_identity}:
+    delete:
+      summary: Revoke
+      description: Revoke a team invitation.
+      operationId: team_invitationRevoke
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      - name: team_invitation_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team-invitation.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: team-invitation
+      x-stackQL-method: Revoke
+      x-stackQL-verb: select
+  /teams/invitations/{team_invitation_token}:
+    get:
+      summary: Get
+      description: Get an invitation by its token
+      operationId: team_invitationGet
+      tags:
+      - teams
+      parameters:
+      - name: team_invitation_token
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for token of team-invitation.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-invitation'
+      x-stackQL-resource: team-invitation
+      x-stackQL-method: Get
+      x-stackQL-verb: select
+  /teams/invitations/{team_invitation_token}/accept:
+    post:
+      summary: Accept
+      description: Accept Team Invitation
+      operationId: team_invitationAccept
+      tags:
+      - teams
+      parameters:
+      - name: team_invitation_token
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for token of team-invitation.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-member'
+      x-stackQL-resource: team-invitation
+      x-stackQL-method: Accept
+      x-stackQL-verb: insert
+  /teams/{team_identity}/members:
+    put:
+      summary: Create or Update
+      description: Create a new team member, or update their role.
+      operationId: team_memberCreateOrUpdate
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-member'
+      x-stackQL-resource: team-member
+      x-stackQL-method: CreateOrUpdate
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  $ref: '#/components/schemas/email'
+                federated:
+                  $ref: '#/components/schemas/federated'
+                role:
+                  $ref: '#/components/schemas/team_role'
+              required:
+              - email
+              - role
+              type:
+              - object
+    post:
+      summary: Create
+      description: Create a new team member.
+      operationId: team_memberCreate
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-member'
+      x-stackQL-resource: team-member
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  $ref: '#/components/schemas/email'
+                federated:
+                  $ref: '#/components/schemas/federated'
+                role:
+                  $ref: '#/components/schemas/team_role'
+              required:
+              - email
+              - role
+              type:
+              - object
+    patch:
+      summary: Update
+      description: Update a team member.
+      operationId: team_memberUpdate
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-member'
+      x-stackQL-resource: team-member
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  $ref: '#/components/schemas/email'
+                federated:
+                  $ref: '#/components/schemas/federated'
+                role:
+                  $ref: '#/components/schemas/team_role'
+              required:
+              - email
+              - role
+              type:
+              - object
+    get:
+      summary: List
+      description: List members of the team.
+      operationId: team_memberList
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/team-member'
+                type:
+                - array
+      x-stackQL-resource: team-member
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /teams/{team_identity}/members/{team_member_identity}:
+    delete:
+      summary: Delete
+      description: Remove a member from the team.
+      operationId: team_memberDelete
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      - name: team_member_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team-member.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: team-member
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+  /teams/{team_identity}/members/{team_member_identity}/apps:
+    get:
+      summary: List By Member
+      description: List the apps of a team member.
+      operationId: team_memberListByMember
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      - name: team_member_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team-member.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/team-app'
+                type:
+                - array
+      x-stackQL-resource: team-member
+      x-stackQL-method: ListByMember
+      x-stackQL-verb: select
+  /teams:
+    get:
+      summary: List
+      description: List teams in which you are a member.
+      operationId: teamList
+      tags:
+      - teams
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/team'
+                type:
+                - array
+      x-stackQL-resource: team
+      x-stackQL-method: List
+      x-stackQL-verb: select
+    post:
+      summary: Create
+      description: Create a new team.
+      operationId: teamCreate
+      tags:
+      - teams
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'
+      x-stackQL-resource: team
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+                address_1:
+                  $ref: '#/components/schemas/address_1'
+                address_2:
+                  $ref: '#/components/schemas/address_2'
+                card_number:
+                  $ref: '#/components/schemas/card_number'
+                city:
+                  $ref: '#/components/schemas/city'
+                country:
+                  $ref: '#/components/schemas/country'
+                cvv:
+                  $ref: '#/components/schemas/cvv'
+                expiration_month:
+                  $ref: '#/components/schemas/expiration_month'
+                expiration_year:
+                  $ref: '#/components/schemas/expiration_year'
+                first_name:
+                  $ref: '#/components/schemas/first_name'
+                last_name:
+                  $ref: '#/components/schemas/last_name'
+                other:
+                  $ref: '#/components/schemas/other'
+                postal_code:
+                  $ref: '#/components/schemas/postal_code'
+                state:
+                  $ref: '#/components/schemas/state'
+                nonce:
+                  $ref: '#/components/schemas/nonce'
+                device_data:
+                  $ref: '#/components/schemas/device_data'
+              required:
+              - name
+              type:
+              - object
+  /teams/{team_identity}:
+    get:
+      summary: Info
+      description: Info for a team.
+      operationId: teamInfo
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'
+      x-stackQL-resource: team
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update team properties.
+      operationId: teamUpdate
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'
+      x-stackQL-resource: team
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                default:
+                  $ref: '#/components/schemas/default'
+                name:
+                  $ref: '#/components/schemas/name'
+              type:
+              - object
+    delete:
+      summary: Delete
+      description: Delete an existing team.
+      operationId: teamDelete
+      tags:
+      - teams
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: team
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+  /enterprise-accounts/{enterprise_account_identity}/teams:
+    get:
+      summary: List by Enterprise Account
+      description: List teams for an enterprise account.
+      operationId: teamListByEnterpriseAccount
+      tags:
+      - teams
+      parameters:
+      - name: enterprise_account_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of enterprise-account.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/team'
+                type:
+                - array
+      x-stackQL-resource: team
+      x-stackQL-method: ListByEnterpriseAccount
+      x-stackQL-verb: select
+    post:
+      summary: Create in Enterprise Account
+      description: Create a team in an enterprise account.
+      operationId: teamCreateInEnterpriseAccount
+      tags:
+      - teams
+      parameters:
+      - name: enterprise_account_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of enterprise-account.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'
+      x-stackQL-resource: team
+      x-stackQL-method: CreateInEnterpriseAccount
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+              required:
+              - name
+              type:
+              - object
+components:
+  schemas:
+    team-feature:
+      description: A team feature represents a feature enabled on a team account.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        description:
+          $ref: '#/components/schemas/description'
+        doc_url:
+          $ref: '#/components/schemas/doc_url'
+        enabled:
+          $ref: '#/components/schemas/enabled'
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        state:
+          $ref: '#/components/schemas/state'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        display_name:
+          $ref: '#/components/schemas/display_name'
+        feedback_email:
+          $ref: '#/components/schemas/feedback_email'
+    created_at:
+      description: when team feature was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    description:
+      description: description of team feature
+      readOnly: true
+      type:
+      - string
+    doc_url:
+      description: documentation URL of team feature
+      readOnly: true
+      type:
+      - string
+    enabled:
+      description: whether or not team feature has been enabled
+      readOnly: false
+      type:
+      - boolean
+    id:
+      description: unique identifier of team feature
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    name:
+      description: unique name of team feature
+      readOnly: true
+      type:
+      - string
+    state:
+      description: state of team feature
+      readOnly: true
+      type:
+      - string
+    updated_at:
+      description: when team feature was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    display_name:
+      description: user readable feature name
+      readOnly: true
+      type:
+      - string
+    feedback_email:
+      description: e-mail to send feedback about the feature
+      readOnly: true
+      type:
+      - string
+    team-invitation:
+      description: A team invitation represents an invite to a team.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        invited_by:
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        team:
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        role:
+          $ref: '#/components/schemas/role'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        user:
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+    email:
+      description: unique email address of account
+      format: email
+      readOnly: false
+      type:
+      - string
+    role:
+      description: role in the team
+      enum:
+      - admin
+      - collaborator
+      - member
+      - owner
+      - null
+      readOnly: true
+      type:
+      - 'null'
+      - string
+    team-member:
+      description: A team member is an individual with access to a team.
+      additionalProperties: false
+      required:
+      - created_at
+      - email
+      - federated
+      - updated_at
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        email:
+          $ref: '#/components/schemas/email'
+        federated:
+          $ref: '#/components/schemas/federated'
+        id:
+          $ref: '#/components/schemas/id'
+        identity_provider:
+          description: Identity Provider information the member is federated with
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              description: name of the identity provider
+              readOnly: true
+              type:
+              - string
+            redacted:
+              description: whether the identity_provider information is redacted or not
+              readOnly: true
+              type:
+              - boolean
+            owner:
+              $ref: '#/components/schemas/owner'
+          type:
+          - 'null'
+          - object
+        role:
+          $ref: '#/components/schemas/role'
+        two_factor_authentication:
+          $ref: '#/components/schemas/two_factor_authentication'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        user:
+          description: user information for the membership
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+    federated:
+      description: whether the user is federated and belongs to an Identity Provider
+      readOnly: true
+      type:
+      - boolean
+    owner:
+      description: entity that owns this identity provider
+      properties:
+        id:
+          description: unique identifier of the owner
+          format: uuid
+          readOnly: true
+          type:
+          - string
+        name:
+          description: name of the owner
+          readOnly: true
+          type:
+          - string
+        type:
+          description: type of the owner
+          enum:
+          - team
+          - enterprise-account
+          readOnly: true
+          type:
+          - string
+      readOnly: false
+      required:
+      - id
+      - type
+      type:
+      - object
+    two_factor_authentication:
+      description: whether the team member has two factor authentication enabled
+      readOnly: true
+      type:
+      - boolean
+    team_role:
+      description: role in the team
+      enum:
+      - admin
+      - viewer
+      - member
+      type:
+      - string
+    team-app:
+      description: A team app encapsulates the team specific functionality of Heroku apps.
+      type:
+      - object
+      properties:
+        archived_at:
+          $ref: '#/components/schemas/archived_at'
+        buildpack_provided_description:
+          $ref: '#/components/schemas/buildpack_provided_description'
+        build_stack:
+          description: identity of the stack that will be used for new builds
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        git_url:
+          $ref: '#/components/schemas/git_url'
+        id:
+          $ref: '#/components/schemas/id'
+        internal_routing:
+          $ref: '#/components/schemas/internal_routing'
+        joined:
+          $ref: '#/components/schemas/joined'
+        locked:
+          $ref: '#/components/schemas/locked'
+        maintenance:
+          $ref: '#/components/schemas/maintenance'
+        name:
+          $ref: '#/components/schemas/name'
+        team:
+          description: team that owns this app
+          properties:
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - 'null'
+          - object
+        owner:
+          description: identity of app owner
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - 'null'
+          - object
+        region:
+          description: identity of app region
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        released_at:
+          $ref: '#/components/schemas/released_at'
+        repo_size:
+          $ref: '#/components/schemas/repo_size'
+        slug_size:
+          $ref: '#/components/schemas/slug_size'
+        space:
+          description: identity of space
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - 'null'
+          - object
+        stack:
+          description: identity of app stack
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        web_url:
+          $ref: '#/components/schemas/web_url'
+    team:
+      description: Teams allow you to manage access to a shared group of applications and other resources.
+      type:
+      - object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        credit_card_collections:
+          $ref: '#/components/schemas/credit_card_collections'
+        default:
+          $ref: '#/components/schemas/default'
+        enterprise_account:
+          $ref: '#/components/schemas/enterprise_account'
+        identity_provider:
+          $ref: '#/components/schemas/identity_provider'
+        membership_limit:
+          $ref: '#/components/schemas/membership_limit'
+        name:
+          $ref: '#/components/schemas/name'
+        provisioned_licenses:
+          $ref: '#/components/schemas/provisioned_licenses'
+        role:
+          $ref: '#/components/schemas/role'
+        type:
+          $ref: '#/components/schemas/type'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    credit_card_collections:
+      description: whether charges incurred by the team are paid by credit card.
+      readOnly: true
+      type:
+      - boolean
+    default:
+      description: whether to use this team when none is specified
+      readOnly: false
+      type:
+      - boolean
+    enterprise_account:
+      type:
+      - 'null'
+      - object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+    identity_provider:
+      description: Identity Provider associated with the Team
+      type:
+      - 'null'
+      - object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        owner:
+          $ref: '#/components/schemas/owner'
+    membership_limit:
+      description: upper limit of members allowed in a team.
+      readOnly: true
+      type:
+      - number
+      - 'null'
+    provisioned_licenses:
+      description: whether the team is provisioned licenses by salesforce.
+      readOnly: true
+      type:
+      - boolean
+    type:
+      description: type of team.
+      enum:
+      - enterprise
+      - team
+      readOnly: true
+      type:
+      - string
+    address_1:
+      type:
+      - string
+      description: street address line 1
+    address_2:
+      type:
+      - string
+      - 'null'
+      description: street address line 2
+    card_number:
+      type:
+      - string
+      - 'null'
+      description: encrypted card number of payment method
+    city:
+      type:
+      - string
+      description: city
+    country:
+      type:
+      - string
+      description: country
+    cvv:
+      type:
+      - string
+      - 'null'
+      description: card verification value
+    expiration_month:
+      type:
+      - string
+      - 'null'
+      description: expiration month
+    expiration_year:
+      type:
+      - string
+      - 'null'
+      description: expiration year
+    first_name:
+      type:
+      - string
+      description: the first name for payment method
+    last_name:
+      type:
+      - string
+      description: the last name for payment method
+    other:
+      type:
+      - string
+      - 'null'
+      description: metadata
+    postal_code:
+      type:
+      - string
+      description: postal code
+    nonce:
+      type:
+      - string
+      - 'null'
+      description: Nonce generated by Braintree hosted fields form
+    device_data:
+      type:
+      - string
+      - 'null'
+      description: Device data string generated by the client
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    team-feature:
+      id: heroku.teams.team-feature
+      name: team-feature
+      title: Team Feature
+      methods:
+        Info:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1features~1{team_feature_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1features/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/team-feature/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/team-feature/methods/List'
+        insert: []
+        update: []
+        delete: []
+        exec: []
+    team-invitation:
+      id: heroku.teams.team-invitation
+      name: team-invitation
+      title: Team Invitation
+      methods:
+        List:
+          operation:
+            $ref: '#/paths/~1teams~1{team_name}~1invitations/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Create:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1invitations/put'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Revoke:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1invitations~1{team_invitation_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Get:
+          operation:
+            $ref: '#/paths/~1teams~1invitations~1{team_invitation_token}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Accept:
+          operation:
+            $ref: '#/paths/~1teams~1invitations~1{team_invitation_token}~1accept/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/team-invitation/methods/List'
+        - $ref: '#/components/x-stackQL-resources/team-invitation/methods/Revoke'
+        - $ref: '#/components/x-stackQL-resources/team-invitation/methods/Get'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/team-invitation/methods/Accept'
+        update:
+        - $ref: '#/components/x-stackQL-resources/team-invitation/methods/Create'
+        delete: []
+        exec: []
+    team-member:
+      id: heroku.teams.team-member
+      name: team-member
+      title: Team Member
+      methods:
+        CreateOrUpdate:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1members/put'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Create:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1members/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        Update:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1members/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1members/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1members~1{team_member_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        ListByMember:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1members~1{team_member_identity}~1apps/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/team-member/methods/List'
+        - $ref: '#/components/x-stackQL-resources/team-member/methods/ListByMember'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/team-member/methods/CreateOrUpdate'
+        - $ref: '#/components/x-stackQL-resources/team-member/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/team-member/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/team-member/methods/Delete'
+        exec: []
+    team:
+      id: heroku.teams.team
+      name: team
+      title: Team
+      methods:
+        List:
+          operation:
+            $ref: '#/paths/~1teams/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Create:
+          operation:
+            $ref: '#/paths/~1teams/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        Info:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        ListByEnterpriseAccount:
+          operation:
+            $ref: '#/paths/~1enterprise-accounts~1{enterprise_account_identity}~1teams/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        CreateInEnterpriseAccount:
+          operation:
+            $ref: '#/paths/~1enterprise-accounts~1{enterprise_account_identity}~1teams/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/team/methods/List'
+        - $ref: '#/components/x-stackQL-resources/team/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/team/methods/ListByEnterpriseAccount'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/team/methods/Create'
+        - $ref: '#/components/x-stackQL-resources/team/methods/CreateInEnterpriseAccount'
+        update:
+        - $ref: '#/components/x-stackQL-resources/team/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/team/methods/Delete'
+        exec: []
+security:
+- herokuAuth: []

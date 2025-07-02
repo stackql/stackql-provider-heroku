@@ -1,0 +1,794 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Oauth
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /oauth/authorizations:
+    post:
+      summary: Create
+      description: Create a new OAuth authorization.
+      operationId: oauth_authorizationCreate
+      tags:
+      - oauth
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-authorization'
+      x-stackQL-resource: oauth-authorization
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                client:
+                  $ref: '#/components/schemas/identity'
+                description:
+                  $ref: '#/components/schemas/description'
+                expires_in:
+                  $ref: '#/components/schemas/expires_in'
+                scope:
+                  $ref: '#/components/schemas/scope'
+              required:
+              - scope
+              type:
+              - object
+    get:
+      summary: List
+      description: List OAuth authorizations.
+      operationId: oauth_authorizationList
+      tags:
+      - oauth
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/oauth-authorization'
+                type:
+                - array
+      x-stackQL-resource: oauth-authorization
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /oauth/authorizations/{oauth_authorization_identity}:
+    delete:
+      summary: Delete
+      description: Delete OAuth authorization.
+      operationId: oauth_authorizationDelete
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_authorization_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-authorization.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: oauth-authorization
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    get:
+      summary: Info
+      description: Info for an OAuth authorization.
+      operationId: oauth_authorizationInfo
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_authorization_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-authorization.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-authorization'
+      x-stackQL-resource: oauth-authorization
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update an existing OAuth authorization.
+      operationId: oauth_authorizationUpdate
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_authorization_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-authorization.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-authorization'
+      x-stackQL-resource: oauth-authorization
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                description:
+                  $ref: '#/components/schemas/description'
+                client:
+                  type:
+                  - object
+                  description: identifier of the client that obtained this authorization
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/id'
+                    secret:
+                      $ref: '#/components/schemas/secret'
+              required:
+              - client
+              type:
+              - object
+  /oauth/authorizations/{oauth_authorization_identity}/actions/regenerate-tokens:
+    post:
+      summary: Regenerate
+      description: Regenerate OAuth tokens. This endpoint is only available to direct authorizations or privileged OAuth clients.
+      operationId: oauth_authorizationRegenerate
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_authorization_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-authorization.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-authorization'
+      x-stackQL-resource: oauth-authorization
+      x-stackQL-method: Regenerate
+      x-stackQL-verb: update
+  /oauth/clients:
+    post:
+      summary: Create
+      description: Create a new OAuth client.
+      operationId: oauth_clientCreate
+      tags:
+      - oauth
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-client'
+      x-stackQL-resource: oauth-client
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+                redirect_uri:
+                  $ref: '#/components/schemas/redirect_uri'
+              required:
+              - name
+              - redirect_uri
+              type:
+              - object
+    get:
+      summary: List
+      description: List OAuth clients
+      operationId: oauth_clientList
+      tags:
+      - oauth
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/oauth-client'
+                type:
+                - array
+      x-stackQL-resource: oauth-client
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /oauth/clients/{oauth_client_identity}:
+    delete:
+      summary: Delete
+      description: Delete OAuth client.
+      operationId: oauth_clientDelete
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_client_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-client.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: oauth-client
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    get:
+      summary: Info
+      description: Info for an OAuth client. The output for unauthenticated requests excludes the `secret` parameter.
+      operationId: oauth_clientInfo
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_client_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-client.
+      responses:
+        '200':
+          description: Successful operation
+      x-stackQL-resource: oauth-client
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update OAuth client
+      operationId: oauth_clientUpdate
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_client_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-client.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-client'
+      x-stackQL-resource: oauth-client
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+                redirect_uri:
+                  $ref: '#/components/schemas/redirect_uri'
+              type:
+              - object
+  /oauth/clients/{oauth_client_identity}/actions/rotate-credentials:
+    post:
+      summary: Rotate Credentials
+      description: Rotate credentials for an OAuth client
+      operationId: oauth_clientRotateCredentials
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_client_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-client.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-client'
+      x-stackQL-resource: oauth-client
+      x-stackQL-method: RotateCredentials
+      x-stackQL-verb: update
+  /oauth/tokens:
+    post:
+      summary: Create
+      description: Create a new OAuth token.
+      operationId: oauth_tokenCreate
+      tags:
+      - oauth
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-token'
+      x-stackQL-resource: oauth-token
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                client:
+                  type:
+                  - object
+                  properties:
+                    secret:
+                      $ref: '#/components/schemas/secret'
+                grant:
+                  type:
+                  - object
+                  properties:
+                    code:
+                      $ref: '#/components/schemas/code'
+                    type:
+                      $ref: '#/components/schemas/type'
+                refresh_token:
+                  type:
+                  - object
+                  properties:
+                    token:
+                      $ref: '#/components/schemas/token'
+              required:
+              - grant
+              - client
+              - refresh_token
+              type:
+              - object
+  /oauth/tokens/{oauth_token_identity}:
+    delete:
+      summary: Delete
+      description: Revoke OAuth access token.
+      operationId: oauth_tokenDelete
+      tags:
+      - oauth
+      parameters:
+      - name: oauth_token_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of oauth-token.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: oauth-token
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+components:
+  schemas:
+    oauth-authorization:
+      description: OAuth authorizations represent clients that a Heroku user has authorized to automate, customize or extend
+        their usage of the platform. For more information please refer to the [Heroku OAuth documentation](https://devcenter.heroku.com/articles/oauth)
+      type:
+      - object
+      properties:
+        access_token:
+          description: access token for this authorization
+          properties:
+            expires_in:
+              $ref: '#/components/schemas/expires_in'
+            id:
+              $ref: '#/components/schemas/id'
+            token:
+              $ref: '#/components/schemas/token'
+          type:
+          - 'null'
+          - object
+        client:
+          description: identifier of the client that obtained this authorization, if any
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+            redirect_uri:
+              $ref: '#/components/schemas/redirect_uri'
+          type:
+          - 'null'
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        description:
+          $ref: '#/components/schemas/description'
+        grant:
+          description: this authorization's grant
+          properties:
+            code:
+              $ref: '#/components/schemas/code'
+            expires_in:
+              $ref: '#/components/schemas/expires_in'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - 'null'
+          - object
+        id:
+          $ref: '#/components/schemas/id'
+        refresh_token:
+          description: refresh token for this authorization
+          properties:
+            expires_in:
+              $ref: '#/components/schemas/expires_in'
+            id:
+              $ref: '#/components/schemas/id'
+            token:
+              $ref: '#/components/schemas/token'
+          type:
+          - 'null'
+          - object
+        scope:
+          $ref: '#/components/schemas/scope'
+        session:
+          description: this authorization's session
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - 'null'
+          - object
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        user:
+          description: authenticated user associated with this authorization
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            email:
+              $ref: '#/components/schemas/email'
+            full_name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+    expires_in:
+      description: seconds until OAuth token expires; may be `null` for tokens with indefinite lifetime
+      readOnly: true
+      type:
+      - 'null'
+      - integer
+    id:
+      description: unique identifier of OAuth token
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    token:
+      description: contents of the token to be used for authorization
+      readOnly: true
+      type:
+      - string
+    name:
+      description: OAuth client name
+      readOnly: true
+      type:
+      - string
+    redirect_uri:
+      description: endpoint for redirection after authorization with OAuth client
+      readOnly: true
+      type:
+      - string
+    created_at:
+      description: when OAuth authorization was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    description:
+      description: human-friendly description of this OAuth authorization
+      readOnly: true
+      type:
+      - string
+    code:
+      description: grant code received from OAuth web application authorization
+      readOnly: true
+      type:
+      - string
+    scope:
+      description: The scope of access OAuth authorization allows
+      readOnly: true
+      type:
+      - array
+      items:
+        type:
+        - string
+    updated_at:
+      description: when OAuth authorization was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    email:
+      description: unique email address of account
+      format: email
+      readOnly: false
+      type:
+      - string
+    identity:
+      anyOf:
+      - $ref: '#/components/schemas/id'
+    secret:
+      description: secret used to obtain OAuth authorizations under this client
+      readOnly: true
+      type:
+      - string
+    oauth-client:
+      description: OAuth clients are applications that Heroku users can authorize to automate, customize or extend their usage
+        of the platform. For more information please refer to the [Heroku OAuth documentation](https://devcenter.heroku.com/articles/oauth).
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        ignores_delinquent:
+          $ref: '#/components/schemas/ignores_delinquent'
+        name:
+          $ref: '#/components/schemas/name'
+        redirect_uri:
+          $ref: '#/components/schemas/redirect_uri'
+        secret:
+          $ref: '#/components/schemas/secret'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    ignores_delinquent:
+      description: whether the client is still operable given a delinquent account
+      readOnly: true
+      type:
+      - boolean
+      - 'null'
+    oauth-token:
+      description: OAuth tokens provide access for authorized clients to act on behalf of a Heroku user to automate, customize
+        or extend their usage of the platform. For more information please refer to the [Heroku OAuth documentation](https://devcenter.heroku.com/articles/oauth)
+      type:
+      - object
+      properties:
+        access_token:
+          description: current access token
+          properties:
+            expires_in:
+              $ref: '#/components/schemas/expires_in'
+            id:
+              $ref: '#/components/schemas/id'
+            token:
+              $ref: '#/components/schemas/token'
+          type:
+          - object
+        authorization:
+          description: authorization for this set of tokens
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        client:
+          description: OAuth client secret used to obtain token
+          properties:
+            secret:
+              $ref: '#/components/schemas/secret'
+          type:
+          - 'null'
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        grant:
+          description: grant used on the underlying authorization
+          properties:
+            code:
+              $ref: '#/components/schemas/code'
+            type:
+              $ref: '#/components/schemas/type'
+          type:
+          - object
+        id:
+          $ref: '#/components/schemas/id'
+        refresh_token:
+          description: refresh token for this authorization
+          properties:
+            expires_in:
+              $ref: '#/components/schemas/expires_in'
+            id:
+              $ref: '#/components/schemas/id'
+            token:
+              $ref: '#/components/schemas/token'
+          type:
+          - object
+        session:
+          description: OAuth session using this token
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        user:
+          description: Reference to the user associated with this token
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+    type:
+      description: type of grant requested, one of `authorization_code` or `refresh_token`
+      readOnly: false
+      type:
+      - string
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    oauth-authorization:
+      id: heroku.oauth.oauth-authorization
+      name: oauth-authorization
+      title: Oauth Authorization
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1oauth~1authorizations/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1oauth~1authorizations/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1oauth~1authorizations~1{oauth_authorization_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1oauth~1authorizations~1{oauth_authorization_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1oauth~1authorizations~1{oauth_authorization_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Regenerate:
+          operation:
+            $ref: '#/paths/~1oauth~1authorizations~1{oauth_authorization_identity}~1actions~1regenerate-tokens/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/oauth-authorization/methods/List'
+        - $ref: '#/components/x-stackQL-resources/oauth-authorization/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/oauth-authorization/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/oauth-authorization/methods/Update'
+        - $ref: '#/components/x-stackQL-resources/oauth-authorization/methods/Regenerate'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/oauth-authorization/methods/Delete'
+        exec: []
+    oauth-client:
+      id: heroku.oauth.oauth-client
+      name: oauth-client
+      title: Oauth Client
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1oauth~1clients/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1oauth~1clients/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1oauth~1clients~1{oauth_client_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1oauth~1clients~1{oauth_client_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1oauth~1clients~1{oauth_client_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        RotateCredentials:
+          operation:
+            $ref: '#/paths/~1oauth~1clients~1{oauth_client_identity}~1actions~1rotate-credentials/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/oauth-client/methods/List'
+        - $ref: '#/components/x-stackQL-resources/oauth-client/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/oauth-client/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/oauth-client/methods/Update'
+        - $ref: '#/components/x-stackQL-resources/oauth-client/methods/RotateCredentials'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/oauth-client/methods/Delete'
+        exec: []
+    oauth-token:
+      id: heroku.oauth.oauth-token
+      name: oauth-token
+      title: Oauth Token
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1oauth~1tokens/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        Delete:
+          operation:
+            $ref: '#/paths/~1oauth~1tokens~1{oauth_token_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+      sqlVerbs:
+        select: []
+        insert:
+        - $ref: '#/components/x-stackQL-resources/oauth-token/methods/Create'
+        update: []
+        delete:
+        - $ref: '#/components/x-stackQL-resources/oauth-token/methods/Delete'
+        exec: []
+security:
+- herokuAuth: []

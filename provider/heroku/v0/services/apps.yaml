@@ -1,0 +1,1987 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Apps
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /apps/{app_identity}/features/{app_feature_identity}:
+    get:
+      summary: Info
+      description: Info for an existing app feature.
+      operationId: app_featureInfo
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: app_feature_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-feature.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-feature'
+      x-stackQL-resource: app-feature
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update an existing app feature.
+      operationId: app_featureUpdate
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: app_feature_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-feature.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-feature'
+      x-stackQL-resource: app-feature
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                enabled:
+                  $ref: '#/components/schemas/enabled'
+              required:
+              - enabled
+              type:
+              - object
+  /apps/{app_identity}/features:
+    get:
+      summary: List
+      description: List existing app features.
+      operationId: app_featureList
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/app-feature'
+                type:
+                - array
+      x-stackQL-resource: app-feature
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /app-setups:
+    post:
+      summary: Create
+      description: Create a new app setup from a gzipped tar archive containing an app.json manifest file.
+      operationId: app_setupCreate
+      tags:
+      - apps
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-setup'
+      x-stackQL-resource: app-setup
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - source_blob
+              type:
+              - object
+              properties:
+                app:
+                  description: optional parameters for created app
+                  properties:
+                    locked:
+                      $ref: '#/components/schemas/locked'
+                    name:
+                      $ref: '#/components/schemas/name'
+                    organization:
+                      $ref: '#/components/schemas/name'
+                    personal:
+                      $ref: '#/components/schemas/personal'
+                    region:
+                      $ref: '#/components/schemas/name'
+                    space:
+                      $ref: '#/components/schemas/name'
+                    stack:
+                      $ref: '#/components/schemas/name'
+                  type:
+                  - object
+                source_blob:
+                  description: gzipped tarball of source code containing app.json manifest file
+                  properties:
+                    checksum:
+                      description: an optional checksum of the gzipped tarball for verifying its integrity
+                      example: SHA256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+                      readOnly: true
+                      type:
+                      - 'null'
+                      - string
+                    url:
+                      description: URL of gzipped tarball of source code containing app.json manifest file
+                      example: https://example.com/source.tgz?token=xyz
+                      readOnly: true
+                      type:
+                      - string
+                    version:
+                      description: Version of the gzipped tarball.
+                      example: v1.3.0
+                      readOnly: true
+                      type:
+                      - string
+                      - 'null'
+                  type:
+                  - object
+                overrides:
+                  $ref: '#/components/schemas/overrides'
+  /app-setups/{app_setup_identity}:
+    get:
+      summary: Info
+      description: Get the status of an app setup.
+      operationId: app_setupInfo
+      tags:
+      - apps
+      parameters:
+      - name: app_setup_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-setup.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-setup'
+      x-stackQL-resource: app-setup
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /account/app-transfers:
+    post:
+      summary: Create
+      description: Create a new app transfer.
+      operationId: app_transferCreate
+      tags:
+      - apps
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-transfer'
+      x-stackQL-resource: app-transfer
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                app:
+                  $ref: '#/components/schemas/identity'
+                recipient:
+                  $ref: '#/components/schemas/identity'
+                silent:
+                  $ref: '#/components/schemas/silent'
+              required:
+              - app
+              - recipient
+              type:
+              - object
+    get:
+      summary: List
+      description: List existing apps transfers.
+      operationId: app_transferList
+      tags:
+      - apps
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/app-transfer'
+                type:
+                - array
+      x-stackQL-resource: app-transfer
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /account/app-transfers/{app_transfer_identity}:
+    delete:
+      summary: Delete
+      description: Delete an existing app transfer
+      operationId: app_transferDelete
+      tags:
+      - apps
+      parameters:
+      - name: app_transfer_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-transfer.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: app-transfer
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    get:
+      summary: Info
+      description: Info for existing app transfer.
+      operationId: app_transferInfo
+      tags:
+      - apps
+      parameters:
+      - name: app_transfer_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-transfer.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-transfer'
+      x-stackQL-resource: app-transfer
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update an existing app transfer.
+      operationId: app_transferUpdate
+      tags:
+      - apps
+      parameters:
+      - name: app_transfer_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-transfer.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-transfer'
+      x-stackQL-resource: app-transfer
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                state:
+                  $ref: '#/components/schemas/state'
+              required:
+              - state
+              type:
+              - object
+  /apps/{app_identity}/webhook-deliveries/{app_webhook_delivery_identity}:
+    get:
+      summary: Info
+      description: Returns the info for an existing delivery.
+      operationId: app_webhook_deliveryInfo
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: app_webhook_delivery_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-webhook-delivery.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-webhook-delivery'
+      x-stackQL-resource: app-webhook-delivery
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /apps/{app_identity}/webhook-deliveries:
+    get:
+      summary: List
+      description: Lists existing deliveries for an app.
+      operationId: app_webhook_deliveryList
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/app-webhook-delivery'
+                type:
+                - array
+      x-stackQL-resource: app-webhook-delivery
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /apps/{app_identity}/webhook-events/{app_webhook_event_identity}:
+    get:
+      summary: Info
+      description: Returns the info for a specified webhook event.
+      operationId: app_webhook_eventInfo
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: app_webhook_event_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-webhook-event.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app-webhook-event'
+      x-stackQL-resource: app-webhook-event
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /apps/{app_identity}/webhook-events:
+    get:
+      summary: List
+      description: Lists existing webhook events for an app.
+      operationId: app_webhook_eventList
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/app-webhook-event'
+                type:
+                - array
+      x-stackQL-resource: app-webhook-event
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /apps/{app_identity}/webhooks:
+    post:
+      summary: Create
+      description: Create an app webhook subscription.
+      operationId: app_webhookCreate
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app_webhook'
+      x-stackQL-resource: app-webhook
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                authorization:
+                  $ref: '#/components/schemas/authorization'
+                include:
+                  $ref: '#/components/schemas/include'
+                level:
+                  $ref: '#/components/schemas/level'
+                secret:
+                  $ref: '#/components/schemas/secret'
+                url:
+                  $ref: '#/components/schemas/url'
+              additionalProperties: false
+              required:
+              - include
+              - level
+              - url
+              type:
+              - object
+    get:
+      summary: List
+      description: List all webhook subscriptions for a particular app.
+      operationId: app_webhookList
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/app_webhook'
+                type:
+                - array
+      x-stackQL-resource: app-webhook
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /apps/{app_identity}/webhooks/{app_webhook_identity}:
+    delete:
+      summary: Delete
+      description: Removes an app webhook subscription.
+      operationId: app_webhookDelete
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: app_webhook_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-webhook.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: app-webhook
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    get:
+      summary: Info
+      description: Returns the info for an app webhook subscription.
+      operationId: app_webhookInfo
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: app_webhook_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-webhook.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app_webhook'
+      x-stackQL-resource: app-webhook
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Updates the details of an app webhook subscription.
+      operationId: app_webhookUpdate
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: app_webhook_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app-webhook.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app_webhook'
+      x-stackQL-resource: app-webhook
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                authorization:
+                  $ref: '#/components/schemas/authorization'
+                include:
+                  $ref: '#/components/schemas/include'
+                level:
+                  $ref: '#/components/schemas/level'
+                secret:
+                  $ref: '#/components/schemas/secret'
+                url:
+                  $ref: '#/components/schemas/url'
+              strictProperties: false
+              type:
+              - object
+  /apps:
+    post:
+      summary: Create
+      description: Create a new app.
+      operationId: appCreate
+      tags:
+      - apps
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app'
+      x-stackQL-resource: app
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  $ref: '#/components/schemas/name'
+                region:
+                  $ref: '#/components/schemas/identity'
+                stack:
+                  $ref: '#/components/schemas/identity'
+                feature_flags:
+                  description: unique name of app feature
+                  type:
+                  - array
+                  items:
+                    $ref: '#/components/schemas/name'
+              type:
+              - object
+    get:
+      summary: List
+      description: List existing apps.
+      operationId: appList
+      tags:
+      - apps
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/app'
+                type:
+                - array
+      x-stackQL-resource: app
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /apps/{app_identity}:
+    delete:
+      summary: Delete
+      description: Delete an existing app.
+      operationId: appDelete
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: app
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    get:
+      summary: Info
+      description: Info for existing app.
+      operationId: appInfo
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app'
+      x-stackQL-resource: app
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update an existing app.
+      operationId: appUpdate
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app'
+      x-stackQL-resource: app
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                build_stack:
+                  $ref: '#/components/schemas/identity'
+                maintenance:
+                  $ref: '#/components/schemas/maintenance'
+                name:
+                  $ref: '#/components/schemas/name'
+              type:
+              - object
+  /users/{account_identity}/apps:
+    get:
+      summary: List Owned and Collaborated
+      description: List owned and collaborated apps (excludes team apps).
+      operationId: appListOwnedAndCollaborated
+      tags:
+      - apps
+      parameters:
+      - name: account_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of account.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/app'
+                type:
+                - array
+      x-stackQL-resource: app
+      x-stackQL-method: ListOwnedAndCollaborated
+      x-stackQL-verb: select
+  /apps/{app_identity}/acm:
+    post:
+      summary: Enable ACM
+      description: Enable ACM flag for an app
+      operationId: appEnableAcm
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app'
+      x-stackQL-resource: app
+      x-stackQL-method: EnableAcm
+      x-stackQL-verb: update
+    delete:
+      summary: Disable ACM
+      description: Disable ACM flag for an app
+      operationId: appDisableAcm
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: app
+      x-stackQL-method: DisableAcm
+      x-stackQL-verb: delete
+    patch:
+      summary: Refresh ACM
+      description: Refresh ACM for an app
+      operationId: appRefreshAcm
+      tags:
+      - apps
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app'
+      x-stackQL-resource: app
+      x-stackQL-method: RefreshAcm
+      x-stackQL-verb: update
+  /teams/apps:
+    post:
+      summary: Create
+      description: Create a new app in the specified team, in the default team if unspecified, or in personal account, if
+        default team is not set.
+      operationId: team_appCreate
+      tags:
+      - apps
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-app'
+      x-stackQL-resource: team-app
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                locked:
+                  $ref: '#/components/schemas/locked'
+                name:
+                  $ref: '#/components/schemas/name'
+                team:
+                  $ref: '#/components/schemas/name'
+                personal:
+                  $ref: '#/components/schemas/personal'
+                region:
+                  $ref: '#/components/schemas/name'
+                space:
+                  $ref: '#/components/schemas/name'
+                stack:
+                  $ref: '#/components/schemas/name'
+                internal_routing:
+                  $ref: '#/components/schemas/internal_routing'
+              type:
+              - object
+  /teams/apps/{team_app_identity}:
+    get:
+      summary: Info
+      description: Info for a team app.
+      operationId: team_appInfo
+      tags:
+      - apps
+      parameters:
+      - name: team_app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team-app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-app'
+      x-stackQL-resource: team-app
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Transfer to Team
+      description: Transfer an existing team app to another team.
+      operationId: team_appTransferToTeam
+      tags:
+      - apps
+      parameters:
+      - name: team_app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team-app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team-app'
+      x-stackQL-resource: team-app
+      x-stackQL-method: TransferToTeam
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                owner:
+                  $ref: '#/components/schemas/name'
+              required:
+              - owner
+              type:
+              - object
+  /teams/{team_identity}/apps:
+    get:
+      summary: List By Team
+      description: List team apps.
+      operationId: team_appListByTeam
+      tags:
+      - apps
+      parameters:
+      - name: team_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of team.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/team-app'
+                type:
+                - array
+      x-stackQL-resource: team-app
+      x-stackQL-method: ListByTeam
+      x-stackQL-verb: select
+components:
+  schemas:
+    app-feature:
+      description: An app feature represents a Heroku labs capability that can be enabled or disabled for an app on Heroku.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        description:
+          $ref: '#/components/schemas/description'
+        doc_url:
+          $ref: '#/components/schemas/doc_url'
+        enabled:
+          $ref: '#/components/schemas/enabled'
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        state:
+          $ref: '#/components/schemas/state'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        display_name:
+          $ref: '#/components/schemas/display_name'
+        feedback_email:
+          $ref: '#/components/schemas/feedback_email'
+    created_at:
+      description: when app feature was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    description:
+      description: description of app feature
+      readOnly: true
+      type:
+      - string
+    doc_url:
+      description: documentation URL of app feature
+      readOnly: true
+      type:
+      - string
+    enabled:
+      description: whether or not app feature has been enabled
+      readOnly: false
+      type:
+      - boolean
+    id:
+      description: unique identifier of app feature
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    name:
+      description: unique name of app feature
+      readOnly: true
+      type:
+      - string
+    state:
+      description: state of app feature
+      readOnly: true
+      type:
+      - string
+    updated_at:
+      description: when app feature was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    display_name:
+      description: user readable feature name
+      readOnly: true
+      type:
+      - string
+    feedback_email:
+      description: e-mail to send feedback about the feature
+      readOnly: true
+      type:
+      - string
+    app-setup:
+      description: An app setup represents an app on Heroku that is setup using an environment, addons, and scripts described
+        in an app.json manifest file.
+      type:
+      - object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        status:
+          $ref: '#/components/schemas/status'
+        failure_message:
+          $ref: '#/components/schemas/failure_message'
+        app:
+          description: identity of app
+          type:
+          - object
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+        build:
+          description: identity and status of build
+          type:
+          - 'null'
+          - object
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            status:
+              $ref: '#/components/schemas/status'
+            output_stream_url:
+              $ref: '#/components/schemas/output_stream_url'
+        manifest_errors:
+          $ref: '#/components/schemas/manifest_errors'
+        postdeploy:
+          $ref: '#/components/schemas/postdeploy'
+        resolved_success_url:
+          $ref: '#/components/schemas/resolved_success_url'
+    status:
+      description: the overall status of app setup
+      enum:
+      - failed
+      - pending
+      - succeeded
+      readOnly: true
+      type:
+      - string
+    failure_message:
+      description: reason that app setup has failed
+      readOnly: true
+      type:
+      - string
+      - 'null'
+    output_stream_url:
+      description: Build process output will be available from this URL as a stream. The stream is available as either `text/plain`
+        or `text/event-stream`. Clients should be prepared to handle disconnects and can resume the stream by sending a `Range`
+        header (for `text/plain`) or a `Last-Event-Id` header (for `text/event-stream`).
+      readOnly: true
+      type:
+      - string
+    manifest_errors:
+      description: errors associated with invalid app.json manifest file
+      readOnly: true
+      items:
+        type:
+        - string
+      type:
+      - array
+    postdeploy:
+      description: result of postdeploy script
+      type:
+      - object
+      - 'null'
+      properties:
+        output:
+          description: output of the postdeploy script
+          readOnly: true
+          type:
+          - string
+        exit_code:
+          description: The exit code of the postdeploy script
+          readOnly: true
+          type:
+          - integer
+      readOnly: true
+    resolved_success_url:
+      description: fully qualified success url
+      readOnly: true
+      type:
+      - string
+      - 'null'
+    locked:
+      default: false
+      description: are other team members forbidden from joining this app.
+      type:
+      - boolean
+    personal:
+      default: false
+      description: force creation of the app in the user account even if a default team is set.
+      type:
+      - boolean
+    overrides:
+      description: overrides of keys in the app.json manifest file
+      properties:
+        buildpacks:
+          description: overrides the buildpacks specified in the app.json manifest file
+          items:
+            $ref: '#/components/schemas/buildpack_override'
+          type:
+          - array
+        env:
+          description: overrides of the env specified in the app.json manifest file
+          readOnly: true
+          additionalProperties: false
+          patternProperties:
+            ^\w+$:
+              type:
+              - string
+          type:
+          - object
+      type:
+      - object
+    buildpack_override:
+      description: a buildpack override
+      properties:
+        url:
+          description: location of the buildpack
+          type:
+          - string
+      type:
+      - object
+    app-transfer:
+      description: An app transfer represents a two party interaction for transferring ownership of an app.
+      type:
+      - object
+      properties:
+        app:
+          description: app involved in the transfer
+          properties:
+            name:
+              $ref: '#/components/schemas/name'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        owner:
+          description: identity of the owner of the transfer
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        recipient:
+          description: identity of the recipient of the transfer
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        state:
+          $ref: '#/components/schemas/state'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    email:
+      description: unique email address of account
+      format: email
+      readOnly: false
+      type:
+      - string
+    identity:
+      anyOf:
+      - $ref: '#/components/schemas/id'
+      - $ref: '#/components/schemas/name'
+    silent:
+      default: false
+      description: whether to suppress email notification when transferring apps
+      readOnly: true
+      type:
+      - boolean
+    app-webhook-delivery:
+      description: Represents the delivery of a webhook notification, including its current status.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        event:
+          description: identity of event
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            include:
+              $ref: '#/components/schemas/include'
+          type:
+          - object
+        id:
+          $ref: '#/components/schemas/id'
+        num_attempts:
+          $ref: '#/components/schemas/num_attempts'
+        next_attempt_at:
+          $ref: '#/components/schemas/next_attempt_at'
+        last_attempt:
+          description: last attempt of a delivery
+          properties:
+            id:
+              $ref: '#/components/schemas/attempt_id'
+            code:
+              $ref: '#/components/schemas/attempt_code'
+            error_class:
+              $ref: '#/components/schemas/attempt_error_class'
+            status:
+              $ref: '#/components/schemas/attempt_status'
+            created_at:
+              $ref: '#/components/schemas/attempt_created_at'
+            updated_at:
+              $ref: '#/components/schemas/attempt_updated_at'
+          type:
+          - object
+          - 'null'
+        status:
+          $ref: '#/components/schemas/status'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        webhook:
+          description: identity of webhook
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            level:
+              $ref: '#/components/schemas/level'
+          type:
+          - object
+    app-webhook-event:
+      description: Represents a webhook event that occurred.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        include:
+          $ref: '#/components/schemas/include'
+        payload:
+          $ref: '#/components/schemas/payload'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    app_webhook:
+      properties:
+        app:
+          description: identity of app. Only used for customer webhooks.
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        include:
+          $ref: '#/components/schemas/include'
+        level:
+          $ref: '#/components/schemas/level'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        url:
+          $ref: '#/components/schemas/url'
+      description: app webhook
+      type:
+      - object
+    include:
+      description: the entities that the subscription provides notifications for
+      items:
+        type:
+        - string
+      type:
+      - array
+    level:
+      description: if `notify`, Heroku makes a single, fire-and-forget delivery attempt. If `sync`, Heroku attempts multiple
+        deliveries until the request is successful or a limit is reached
+      enum:
+      - notify
+      - sync
+      type:
+      - string
+    url:
+      description: the URL where the webhook's notification requests are sent
+      format: uri
+      type:
+      - string
+    authorization:
+      description: a custom `Authorization` header that Heroku will include with all webhook notifications
+      type:
+      - 'null'
+      - string
+    secret:
+      description: "a value that Heroku will use to sign all webhook notification requests (the signature is included in the\
+        \ request\xE2\u20AC\u2122s `Heroku-Webhook-Hmac-SHA256` header)"
+      type:
+      - 'null'
+      - string
+    app:
+      description: An app represents the program that you would like to deploy and run on Heroku.
+      type:
+      - object
+      properties:
+        acm:
+          $ref: '#/components/schemas/acm'
+        archived_at:
+          $ref: '#/components/schemas/archived_at'
+        buildpack_provided_description:
+          $ref: '#/components/schemas/buildpack_provided_description'
+        build_stack:
+          description: identity of the stack that will be used for new builds
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        generation:
+          $ref: '#/components/schemas/generation'
+        git_url:
+          $ref: '#/components/schemas/git_url'
+        id:
+          $ref: '#/components/schemas/id'
+        internal_routing:
+          $ref: '#/components/schemas/internal_routing'
+        maintenance:
+          $ref: '#/components/schemas/maintenance'
+        name:
+          $ref: '#/components/schemas/name'
+        owner:
+          description: identity of app owner
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        organization:
+          description: identity of team
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - 'null'
+          - object
+        team:
+          description: identity of team
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - 'null'
+          - object
+        region:
+          description: identity of app region
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        released_at:
+          $ref: '#/components/schemas/released_at'
+        repo_size:
+          $ref: '#/components/schemas/repo_size'
+        slug_size:
+          $ref: '#/components/schemas/slug_size'
+        space:
+          description: identity of space
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+            shield:
+              $ref: '#/components/schemas/shield'
+          type:
+          - 'null'
+          - object
+        stack:
+          description: identity of app stack
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        web_url:
+          $ref: '#/components/schemas/web_url'
+    acm:
+      description: ACM status of this app
+      default: false
+      readOnly: true
+      type:
+      - boolean
+    archived_at:
+      description: when app was archived
+      format: date-time
+      readOnly: true
+      type:
+      - 'null'
+      - string
+    buildpack_provided_description:
+      description: description from buildpack of app
+      readOnly: true
+      type:
+      - 'null'
+      - string
+    generation:
+      description: Generation of the Heroku platform for this app
+      readOnly: true
+      type:
+      - object
+      properties:
+        id:
+          description: unique identifier of the generation of the Heroku platform for this app
+          format: uuid
+          readOnly: true
+          type:
+          - string
+        name:
+          description: unique name of the generation of the Heroku platform for this app
+          readOnly: true
+          type:
+          - string
+    git_url:
+      description: git repo URL of app
+      pattern: ^https://git\.heroku\.com/[a-z][a-z0-9-]{2,29}\.git$
+      readOnly: true
+      type:
+      - string
+    internal_routing:
+      default: false
+      description: describes whether a Private Spaces app is externally routable or not
+      readOnly: false
+      type:
+      - boolean
+      - 'null'
+    maintenance:
+      default: false
+      description: maintenance status of app
+      readOnly: false
+      type:
+      - boolean
+    released_at:
+      default: null
+      description: when app was released
+      format: date-time
+      readOnly: true
+      type:
+      - 'null'
+      - string
+    repo_size:
+      default: null
+      description: git repo size in bytes of app
+      readOnly: true
+      type:
+      - integer
+      - 'null'
+    slug_size:
+      default: null
+      description: slug size in bytes of app
+      readOnly: true
+      type:
+      - integer
+      - 'null'
+    shield:
+      description: true if this space has shield enabled
+      readOnly: true
+      type:
+      - boolean
+    web_url:
+      description: web URL of app
+      format: uri
+      pattern: ^https?://[a-z][a-z0-9-]{3,43}\.herokuapp\.com/$
+      readOnly: true
+      type:
+      - 'null'
+      - string
+    team-app:
+      description: A team app encapsulates the team specific functionality of Heroku apps.
+      type:
+      - object
+      properties:
+        archived_at:
+          $ref: '#/components/schemas/archived_at'
+        buildpack_provided_description:
+          $ref: '#/components/schemas/buildpack_provided_description'
+        build_stack:
+          description: identity of the stack that will be used for new builds
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        git_url:
+          $ref: '#/components/schemas/git_url'
+        id:
+          $ref: '#/components/schemas/id'
+        internal_routing:
+          $ref: '#/components/schemas/internal_routing'
+        joined:
+          $ref: '#/components/schemas/joined'
+        locked:
+          $ref: '#/components/schemas/locked'
+        maintenance:
+          $ref: '#/components/schemas/maintenance'
+        name:
+          $ref: '#/components/schemas/name'
+        team:
+          description: team that owns this app
+          properties:
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - 'null'
+          - object
+        owner:
+          description: identity of app owner
+          properties:
+            email:
+              $ref: '#/components/schemas/email'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - 'null'
+          - object
+        region:
+          description: identity of app region
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        released_at:
+          $ref: '#/components/schemas/released_at'
+        repo_size:
+          $ref: '#/components/schemas/repo_size'
+        slug_size:
+          $ref: '#/components/schemas/slug_size'
+        space:
+          description: identity of space
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - 'null'
+          - object
+        stack:
+          description: identity of app stack
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        web_url:
+          $ref: '#/components/schemas/web_url'
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    app-feature:
+      id: heroku.apps.app-feature
+      name: app-feature
+      title: App Feature
+      methods:
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1features~1{app_feature_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1features~1{app_feature_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1features/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/app-feature/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/app-feature/methods/List'
+        insert: []
+        update:
+        - $ref: '#/components/x-stackQL-resources/app-feature/methods/Update'
+        delete: []
+        exec: []
+    app-setup:
+      id: heroku.apps.app-setup
+      name: app-setup
+      title: App Setup
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1app-setups/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        Info:
+          operation:
+            $ref: '#/paths/~1app-setups~1{app_setup_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/app-setup/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/app-setup/methods/Create'
+        update: []
+        delete: []
+        exec: []
+    app-transfer:
+      id: heroku.apps.app-transfer
+      name: app-transfer
+      title: App Transfer
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1account~1app-transfers/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1account~1app-transfers/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1account~1app-transfers~1{app_transfer_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1account~1app-transfers~1{app_transfer_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1account~1app-transfers~1{app_transfer_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/app-transfer/methods/List'
+        - $ref: '#/components/x-stackQL-resources/app-transfer/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/app-transfer/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/app-transfer/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/app-transfer/methods/Delete'
+        exec: []
+    app-webhook-delivery:
+      id: heroku.apps.app-webhook-delivery
+      name: app-webhook-delivery
+      title: App Webhook Delivery
+      methods:
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhook-deliveries~1{app_webhook_delivery_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhook-deliveries/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/app-webhook-delivery/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/app-webhook-delivery/methods/List'
+        insert: []
+        update: []
+        delete: []
+        exec: []
+    app-webhook-event:
+      id: heroku.apps.app-webhook-event
+      name: app-webhook-event
+      title: App Webhook Event
+      methods:
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhook-events~1{app_webhook_event_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhook-events/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/app-webhook-event/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/app-webhook-event/methods/List'
+        insert: []
+        update: []
+        delete: []
+        exec: []
+    app-webhook:
+      id: heroku.apps.app-webhook
+      name: app-webhook
+      title: App Webhook
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhooks/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhooks/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhooks~1{app_webhook_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhooks~1{app_webhook_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1webhooks~1{app_webhook_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/app-webhook/methods/List'
+        - $ref: '#/components/x-stackQL-resources/app-webhook/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/app-webhook/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/app-webhook/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/app-webhook/methods/Delete'
+        exec: []
+    app:
+      id: heroku.apps.app
+      name: app
+      title: App
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1apps/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1apps/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        ListOwnedAndCollaborated:
+          operation:
+            $ref: '#/paths/~1users~1{account_identity}~1apps/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        EnableAcm:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1acm/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        DisableAcm:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1acm/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        RefreshAcm:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1acm/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/app/methods/List'
+        - $ref: '#/components/x-stackQL-resources/app/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/app/methods/ListOwnedAndCollaborated'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/app/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/app/methods/Update'
+        - $ref: '#/components/x-stackQL-resources/app/methods/EnableAcm'
+        - $ref: '#/components/x-stackQL-resources/app/methods/RefreshAcm'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/app/methods/Delete'
+        - $ref: '#/components/x-stackQL-resources/app/methods/DisableAcm'
+        exec: []
+    team-app:
+      id: heroku.apps.team-app
+      name: team-app
+      title: Team App
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1teams~1apps/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        Info:
+          operation:
+            $ref: '#/paths/~1teams~1apps~1{team_app_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        TransferToTeam:
+          operation:
+            $ref: '#/paths/~1teams~1apps~1{team_app_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        ListByTeam:
+          operation:
+            $ref: '#/paths/~1teams~1{team_identity}~1apps/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/team-app/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/team-app/methods/ListByTeam'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/team-app/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/team-app/methods/TransferToTeam'
+        delete: []
+        exec: []
+security:
+- herokuAuth: []
