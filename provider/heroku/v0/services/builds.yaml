@@ -1,0 +1,496 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Builds
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /apps/{app_identity}/builds:
+    post:
+      summary: Create
+      description: Create a new build.
+      operationId: buildCreate
+      tags:
+      - builds
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/build'
+      x-stackQL-resource: build
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type:
+              - object
+              properties:
+                buildpacks:
+                  $ref: '#/components/schemas/buildpacks'
+                source_blob:
+                  $ref: '#/components/schemas/source_blob'
+              required:
+              - source_blob
+    get:
+      summary: List
+      description: List existing build.
+      operationId: buildList
+      tags:
+      - builds
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/build'
+                type:
+                - array
+      x-stackQL-resource: build
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /apps/{app_identity}/builds/{build_identity}:
+    get:
+      summary: Info
+      description: Info for existing build.
+      operationId: buildInfo
+      tags:
+      - builds
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: build_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of build.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/build'
+      x-stackQL-resource: build
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    delete:
+      summary: Cancel
+      description: Cancel running build.
+      operationId: buildCancel
+      tags:
+      - builds
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: build_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of build.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: build
+      x-stackQL-method: Cancel
+      x-stackQL-verb: select
+  /apps/{app_identity}/build-cache:
+    delete:
+      summary: Delete cache
+      description: Destroy a build cache.
+      operationId: buildDeleteCache
+      tags:
+      - builds
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: build
+      x-stackQL-method: DeleteCache
+      x-stackQL-verb: exec
+  /apps/{app_identity}/buildpack-installations:
+    put:
+      summary: Update
+      description: Update an app's buildpack installations.
+      operationId: buildpack_installationUpdate
+      tags:
+      - builds
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/buildpack-installation'
+                type:
+                - array
+      x-stackQL-resource: buildpack-installation
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                updates:
+                  description: The buildpack attribute can accept a name, a url, or a urn.
+                  items:
+                    $ref: '#/components/schemas/update'
+                  type:
+                  - array
+              required:
+              - updates
+              type:
+              - object
+    get:
+      summary: List
+      description: List an app's existing buildpack installations.
+      operationId: buildpack_installationList
+      tags:
+      - builds
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/buildpack-installation'
+                type:
+                - array
+      x-stackQL-resource: buildpack-installation
+      x-stackQL-method: List
+      x-stackQL-verb: select
+components:
+  schemas:
+    build:
+      description: A build represents the process of transforming a code tarball into build artifacts
+      required:
+      - created_at
+      - id
+      - source_blob
+      - status
+      - updated_at
+      - user
+      type:
+      - object
+      properties:
+        app:
+          description: app that the build belongs to
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        buildpacks:
+          $ref: '#/components/schemas/buildpacks'
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        output_stream_url:
+          $ref: '#/components/schemas/output_stream_url'
+        source_blob:
+          $ref: '#/components/schemas/source_blob'
+        release:
+          $ref: '#/components/schemas/release'
+        slug:
+          description: slug created by this build (only applicable for Cedar-generation apps)
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+          - 'null'
+        stack:
+          $ref: '#/components/schemas/stack'
+        status:
+          $ref: '#/components/schemas/status'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        user:
+          description: user that started the build
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            email:
+              $ref: '#/components/schemas/email'
+          type:
+          - object
+    id:
+      description: unique identifier of app
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    buildpacks:
+      description: buildpacks executed for this build, in order (only applicable to Cedar-generation apps)
+      type:
+      - array
+      - 'null'
+      items:
+        description: Buildpack to execute in a build
+        type:
+        - object
+        properties:
+          url:
+            description: the URL of the buildpack for the app
+            readOnly: false
+            type:
+            - string
+          name:
+            description: Buildpack Registry name of the buildpack for the app
+            readOnly: false
+            type:
+            - string
+    created_at:
+      description: when build was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    output_stream_url:
+      description: Build process output will be available from this URL as a stream. The stream is available as either `text/plain`
+        or `text/event-stream`. Clients should be prepared to handle disconnects and can resume the stream by sending a `Range`
+        header (for `text/plain`) or a `Last-Event-Id` header (for `text/event-stream`).
+      readOnly: true
+      type:
+      - string
+    source_blob:
+      description: location of gzipped tarball of source code used to create build
+      properties:
+        checksum:
+          description: an optional checksum of the gzipped tarball for verifying its integrity
+          readOnly: true
+          type:
+          - 'null'
+          - string
+        url:
+          description: URL where gzipped tar archive of source code for build was downloaded.
+          readOnly: true
+          type:
+          - string
+        version:
+          description: Version of the gzipped tarball.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        version_description:
+          description: Version description of the gzipped tarball.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      type:
+      - object
+    release:
+      description: release resulting from the build
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+      readOnly: true
+      type:
+      - 'null'
+      - object
+    stack:
+      description: stack of build
+      readOnly: true
+      type:
+      - string
+    status:
+      description: status of build
+      enum:
+      - failed
+      - pending
+      - succeeded
+      readOnly: true
+      type:
+      - string
+    updated_at:
+      description: when build was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    email:
+      description: unique email address of account
+      format: email
+      readOnly: false
+      type:
+      - string
+    buildpack-installation:
+      description: A buildpack installation represents a buildpack that will be run against an app.
+      type:
+      - object
+      properties:
+        ordinal:
+          $ref: '#/components/schemas/ordinal'
+        buildpack:
+          description: buildpack
+          properties:
+            url:
+              $ref: '#/components/schemas/url'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+    ordinal:
+      description: determines the order in which the buildpacks will execute
+      readOnly: true
+      type:
+      - integer
+    url:
+      description: location of the buildpack for the app. Either a url (unofficial buildpacks) or an internal urn (heroku
+        official buildpacks).
+      readOnly: false
+      type:
+      - string
+    name:
+      description: either the Buildpack Registry name or a URL of the buildpack for the app
+      readOnly: false
+      type:
+      - string
+    update:
+      additionalProperties: false
+      description: Properties to update a buildpack installation
+      properties:
+        buildpack:
+          $ref: '#/components/schemas/url'
+      readOnly: false
+      required:
+      - buildpack
+      type:
+      - object
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    build:
+      id: heroku.builds.build
+      name: build
+      title: Build
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1builds/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1builds/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1builds~1{build_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Cancel:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1builds~1{build_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        DeleteCache:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1build-cache/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/build/methods/List'
+        - $ref: '#/components/x-stackQL-resources/build/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/build/methods/Cancel'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/build/methods/Create'
+        update: []
+        delete: []
+        exec:
+        - $ref: '#/components/x-stackQL-resources/build/methods/DeleteCache'
+    buildpack-installation:
+      id: heroku.builds.buildpack-installation
+      name: buildpack-installation
+      title: Buildpack Installation
+      methods:
+        Update:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1buildpack-installations/put'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1buildpack-installations/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/buildpack-installation/methods/List'
+        insert: []
+        update:
+        - $ref: '#/components/x-stackQL-resources/buildpack-installation/methods/Update'
+        delete: []
+        exec: []
+security:
+- herokuAuth: []

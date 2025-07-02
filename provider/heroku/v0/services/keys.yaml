@@ -1,0 +1,147 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Keys
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /account/keys/{key_identity}:
+    get:
+      summary: Info
+      description: Info for existing key.
+      operationId: keyInfo
+      tags:
+      - keys
+      parameters:
+      - name: key_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of key.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/key'
+      x-stackQL-resource: key
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /account/keys:
+    get:
+      summary: List
+      description: List existing keys.
+      operationId: keyList
+      tags:
+      - keys
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/key'
+                type:
+                - array
+      x-stackQL-resource: key
+      x-stackQL-method: List
+      x-stackQL-verb: select
+components:
+  schemas:
+    key:
+      description: Keys represent public SSH keys associated with an account and are used to authorize accounts as they are
+        performing git operations.
+      type:
+      - object
+      properties:
+        comment:
+          $ref: '#/components/schemas/comment'
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        email:
+          $ref: '#/components/schemas/email'
+        fingerprint:
+          $ref: '#/components/schemas/fingerprint'
+        id:
+          $ref: '#/components/schemas/id'
+        public_key:
+          $ref: '#/components/schemas/public_key'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    comment:
+      description: comment on the key
+      readOnly: true
+      type:
+      - string
+    created_at:
+      description: when key was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    email:
+      deprecated: true
+      description: deprecated. Please refer to 'comment' instead
+      readOnly: true
+      type:
+      - string
+    fingerprint:
+      description: a unique identifying string based on contents
+      readOnly: true
+      type:
+      - string
+    id:
+      description: unique identifier of this key
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    public_key:
+      description: full public_key as uploaded
+      readOnly: true
+      type:
+      - string
+    updated_at:
+      description: when key was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    key:
+      id: heroku.keys.key
+      name: key
+      title: Key
+      methods:
+        Info:
+          operation:
+            $ref: '#/paths/~1account~1keys~1{key_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1account~1keys/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/key/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/key/methods/List'
+        insert: []
+        update: []
+        delete: []
+        exec: []
+security:
+- herokuAuth: []

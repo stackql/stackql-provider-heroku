@@ -1,0 +1,172 @@
+id: heroku
+name: heroku
+version: v0
+providerServices:
+  accounts:
+    id: accounts:v0
+    name: accounts
+    preferred: true
+    service:
+      $ref: heroku/v0/services/accounts.yaml
+    title: Heroku Accounts
+    version: v0
+    description: Manage Heroku user accounts and account-level features.
+  addons:
+    id: addons:v0
+    name: addons
+    preferred: true
+    service:
+      $ref: heroku/v0/services/addons.yaml
+    title: Heroku Addons
+    version: v0
+    description: Provision, manage, and inspect Heroku add-ons and their associated plans.
+  apps:
+    id: apps:v0
+    name: apps
+    preferred: true
+    service:
+      $ref: heroku/v0/services/apps.yaml
+    title: Heroku Apps
+    version: v0
+    description: Create and manage Heroku applications, including setup, transfers, and webhooks.
+  builds:
+    id: builds:v0
+    name: builds
+    preferred: true
+    service:
+      $ref: heroku/v0/services/builds.yaml
+    title: Heroku Builds
+    version: v0
+    description: Manage app builds and buildpack configurations.
+  collaborators:
+    id: collaborators:v0
+    name: collaborators
+    preferred: true
+    service:
+      $ref: heroku/v0/services/collaborators.yaml
+    title: Heroku Collaborators
+    version: v0
+    description: Manage user access and collaboration on applications.
+  config_vars:
+    id: config_vars:v0
+    name: config_vars
+    preferred: true
+    service:
+      $ref: heroku/v0/services/config_vars.yaml
+    title: Heroku Config Vars
+    version: v0
+    description: View and manage application configuration variables.
+  domains:
+    id: domains:v0
+    name: domains
+    preferred: true
+    service:
+      $ref: heroku/v0/services/domains.yaml
+    title: Heroku Domains
+    version: v0
+    description: Manage custom domains and SNI endpoints for Heroku apps.
+  dynos:
+    id: dynos:v0
+    name: dynos
+    preferred: true
+    service:
+      $ref: heroku/v0/services/dynos.yaml
+    title: Heroku Dynos
+    version: v0
+    description: Manage application dynos, including scaling, restarting, and viewing available sizes.
+  keys:
+    id: keys:v0
+    name: keys
+    preferred: true
+    service:
+      $ref: heroku/v0/services/keys.yaml
+    title: Heroku Keys
+    version: v0
+    description: Manage SSH keys associated with a Heroku account for git operations.
+  logging:
+    id: logging:v0
+    name: logging
+    preferred: true
+    service:
+      $ref: heroku/v0/services/logging.yaml
+    title: Heroku Logging
+    version: v0
+    description: Manage log drains and create log streaming sessions for applications.
+  misc:
+    id: misc:v0
+    name: misc
+    preferred: true
+    service:
+      $ref: heroku/v0/services/misc.yaml
+    title: Heroku Misc
+    version: v0
+    description: Miscellaneous and uncategorized Heroku API operations.
+  networking:
+    id: networking:v0
+    name: networking
+    preferred: true
+    service:
+      $ref: heroku/v0/services/networking.yaml
+    title: Heroku Networking
+    version: v0
+    description: Manage Private Space networking, including VPC peering and VPN connections.
+  oauth:
+    id: oauth:v0
+    name: oauth
+    preferred: true
+    service:
+      $ref: heroku/v0/services/oauth.yaml
+    title: Heroku Oauth
+    version: v0
+    description: Manage OAuth clients, authorizations, and tokens for API access.
+  pipelines:
+    id: pipelines:v0
+    name: pipelines
+    preferred: true
+    service:
+      $ref: heroku/v0/services/pipelines.yaml
+    title: Heroku Pipelines
+    version: v0
+    description: Manage CI/CD pipelines, promotions, and couplings between applications.
+  platform:
+    id: platform:v0
+    name: platform
+    preferred: true
+    service:
+      $ref: heroku/v0/services/platform.yaml
+    title: Heroku Platform
+    version: v0
+    description: View available regions and stacks on the Heroku platform.
+  releases:
+    id: releases:v0
+    name: releases
+    preferred: true
+    service:
+      $ref: heroku/v0/services/releases.yaml
+    title: Heroku Releases
+    version: v0
+    description: Manage application releases, slugs, and OCI images for deployments.
+  spaces:
+    id: spaces:v0
+    name: spaces
+    preferred: true
+    service:
+      $ref: heroku/v0/services/spaces.yaml
+    title: Heroku Spaces
+    version: v0
+    description: Manage Private Spaces for isolated application execution environments.
+  teams:
+    id: teams:v0
+    name: teams
+    preferred: true
+    service:
+      $ref: heroku/v0/services/teams.yaml
+    title: Heroku Teams
+    version: v0
+    description: Manage teams, members, and team-level features and invitations.
+config:
+  auth:
+    type: bearer
+    credentialsenvvar: HEROKU_API_TOKEN
+    scheme: bearer
+    doc_url: https://devcenter.heroku.com/articles/platform-api-quickstart#authentication

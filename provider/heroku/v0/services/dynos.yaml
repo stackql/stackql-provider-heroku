@@ -1,0 +1,889 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Dynos
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /dyno-sizes/{dyno_size_identity}:
+    get:
+      summary: Info
+      description: Info for existing dyno size.
+      operationId: dyno_sizeInfo
+      tags:
+      - dynos
+      parameters:
+      - name: dyno_size_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of dyno-size.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dyno-size'
+      x-stackQL-resource: dyno-size
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /dyno-sizes:
+    get:
+      summary: List
+      description: List existing dyno sizes.
+      operationId: dyno_sizeList
+      tags:
+      - dynos
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/dyno-size'
+                type:
+                - array
+      x-stackQL-resource: dyno-size
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /apps/{app_identity}/available-dyno-sizes:
+    get:
+      summary: List App Dyno Sizes
+      description: List available dyno sizes for an app
+      operationId: dyno_sizeListAppDynoSizes
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/dyno-size'
+      x-stackQL-resource: dyno-size
+      x-stackQL-method: ListAppDynoSizes
+      x-stackQL-verb: exec
+  /apps/{app_identity}/dynos:
+    post:
+      summary: Create
+      description: Create a new dyno.
+      operationId: dynoCreate
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dyno'
+      x-stackQL-resource: dyno
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                attach:
+                  $ref: '#/components/schemas/attach'
+                command:
+                  $ref: '#/components/schemas/command'
+                env:
+                  $ref: '#/components/schemas/env'
+                force_no_tty:
+                  $ref: '#/components/schemas/force_no_tty'
+                size:
+                  $ref: '#/components/schemas/size'
+                type:
+                  $ref: '#/components/schemas/type'
+                time_to_live:
+                  $ref: '#/components/schemas/time_to_live'
+              required:
+              - command
+              type:
+              - object
+    delete:
+      summary: Restart all
+      description: Restart all dynos.
+      operationId: dynoRestartAll
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: dyno
+      x-stackQL-method: RestartAll
+      x-stackQL-verb: exec
+    get:
+      summary: List
+      description: List existing dynos.
+      operationId: dynoList
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/dyno'
+                type:
+                - array
+      x-stackQL-resource: dyno
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /apps/{app_identity}/dynos/{dyno_identity}:
+    delete:
+      summary: Restart
+      description: Restart dyno.
+      operationId: dynoRestart
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: dyno_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of dyno.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: dyno
+      x-stackQL-method: Restart
+      x-stackQL-verb: exec
+    get:
+      summary: Info
+      description: Info for existing dyno.
+      operationId: dynoInfo
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: dyno_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of dyno.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dyno'
+      x-stackQL-resource: dyno
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /apps/{app_identity}/formations/{dyno_formation_type}:
+    delete:
+      summary: Restart formation
+      description: Restart dynos of a given formation type.
+      operationId: dynoRestartFormation
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: dyno_formation_type
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for formation_type of dyno.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: dyno
+      x-stackQL-method: RestartFormation
+      x-stackQL-verb: exec
+  /apps/{app_identity}/dynos/{dyno_identity}/actions/stop:
+    post:
+      summary: Stop
+      description: Stop dyno.
+      operationId: dynoStop
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: dyno_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of dyno.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                type:
+                - object
+      x-stackQL-resource: dyno
+      x-stackQL-method: Stop
+      x-stackQL-verb: exec
+  /apps/{app_identity}/formations/{dyno_formation_type}/actions/stop:
+    post:
+      summary: Stop formation
+      description: Stop dynos of a given formation type.
+      operationId: dynoStopFormation
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: dyno_formation_type
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for formation_type of dyno.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                type:
+                - object
+      x-stackQL-resource: dyno
+      x-stackQL-method: StopFormation
+      x-stackQL-verb: exec
+  /apps/{app_identity}/formation/{formation_identity}:
+    get:
+      summary: Info
+      description: Info for a process type
+      operationId: formationInfo
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: formation_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of formation.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/formation'
+      x-stackQL-resource: formation
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+    patch:
+      summary: Update
+      description: Update process type
+      operationId: formationUpdate
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: formation_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of formation.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/formation'
+      x-stackQL-resource: formation
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                dyno_size:
+                  $ref: '#/components/schemas/dyno_size'
+                quantity:
+                  $ref: '#/components/schemas/quantity'
+              type:
+              - object
+  /apps/{app_identity}/formation:
+    get:
+      summary: List
+      description: List process type formation
+      operationId: formationList
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/formation'
+                type:
+                - array
+      x-stackQL-resource: formation
+      x-stackQL-method: List
+      x-stackQL-verb: select
+    patch:
+      summary: Batch Update
+      description: Batch update process types
+      operationId: formationBatchUpdate
+      tags:
+      - dynos
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/formation'
+                type:
+                - array
+      x-stackQL-resource: formation
+      x-stackQL-method: BatchUpdate
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                updates:
+                  type:
+                  - array
+                  items:
+                    $ref: '#/components/schemas/update'
+                  description: Array with formation updates. Each element must have "type", the id or name of the process
+                    type to be updated, and can optionally update its "quantity" or "dyno_size".
+              required:
+              - updates
+              type:
+              - object
+components:
+  schemas:
+    dyno-size:
+      description: 'Dyno sizes are the values and details of sizes that can be assigned to dynos. This information can also
+        be found at : [https://devcenter.heroku.com/articles/dyno-types](https://devcenter.heroku.com/articles/dyno-types).'
+      type:
+      - object
+      properties:
+        architecture:
+          $ref: '#/components/schemas/architecture'
+        compute:
+          $ref: '#/components/schemas/compute'
+        cost:
+          $ref: '#/components/schemas/cost'
+        dedicated:
+          $ref: '#/components/schemas/dedicated'
+        precise_dyno_units:
+          $ref: '#/components/schemas/precise_dyno_units'
+        generation:
+          $ref: '#/components/schemas/generation'
+        id:
+          $ref: '#/components/schemas/id'
+        memory:
+          $ref: '#/components/schemas/memory'
+        name:
+          $ref: '#/components/schemas/name'
+        private_space_only:
+          $ref: '#/components/schemas/private_space_only'
+    architecture:
+      description: CPU architecture of this dyno size
+      readOnly: true
+      type:
+      - string
+    compute:
+      description: minimum vCPUs, non-dedicated may get more depending on load
+      readOnly: true
+      type:
+      - integer
+    cost:
+      description: price information for this dyno size
+      readOnly: true
+      type:
+      - 'null'
+      - object
+    dedicated:
+      description: whether this dyno will be dedicated to one user
+      readOnly: true
+      type:
+      - boolean
+    precise_dyno_units:
+      description: unit of consumption for Heroku Enterprise customers to 2 decimal places
+      readOnly: true
+      type:
+      - number
+    generation:
+      description: Generation of the Heroku platform for this dyno size
+      readOnly: true
+      type:
+      - object
+      properties:
+        id:
+          description: unique identifier of the generation of the Heroku platform for this dyno size
+          format: uuid
+          readOnly: true
+          type:
+          - string
+        name:
+          description: unique name of the generation of the Heroku platform for this dyno size
+          readOnly: true
+          type:
+          - string
+    id:
+      description: unique identifier of the dyno size
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    memory:
+      description: amount of RAM in GB
+      readOnly: true
+      type:
+      - number
+    name:
+      description: name of the dyno size
+      readOnly: true
+      type:
+      - string
+    private_space_only:
+      description: whether this dyno can only be provisioned in a private space
+      readOnly: true
+      type:
+      - boolean
+    dyno:
+      description: 'Dynos encapsulate running processes of an app on Heroku. Detailed information about dyno sizes can be
+        found at: [https://devcenter.heroku.com/articles/dyno-types](https://devcenter.heroku.com/articles/dyno-types).'
+      type:
+      - object
+      properties:
+        attach_url:
+          $ref: '#/components/schemas/attach_url'
+        command:
+          $ref: '#/components/schemas/command'
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        release:
+          description: app release of the dyno
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            version:
+              $ref: '#/components/schemas/version'
+          type:
+          - object
+        app:
+          description: app formation belongs to
+          properties:
+            name:
+              $ref: '#/components/schemas/name'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        size:
+          $ref: '#/components/schemas/size'
+        state:
+          $ref: '#/components/schemas/state'
+        type:
+          $ref: '#/components/schemas/type'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    attach_url:
+      description: a URL to stream output from for attached processes or null for non-attached processes
+      readOnly: true
+      type:
+      - string
+      - 'null'
+    command:
+      description: command used to start this process
+      readOnly: false
+      type:
+      - string
+    created_at:
+      description: when dyno was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    version:
+      description: unique version assigned to the release
+      readOnly: true
+      type:
+      - integer
+    size:
+      description: dyno size
+      readOnly: false
+      type:
+      - string
+    state:
+      description: 'current status of process (either: crashed, down, idle, starting, or up)'
+      readOnly: true
+      type:
+      - string
+    type:
+      description: type of process
+      readOnly: false
+      type:
+      - string
+    updated_at:
+      description: when process last changed state
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    attach:
+      description: whether to stream output or not
+      readOnly: false
+      type:
+      - boolean
+    env:
+      additionalProperties: false
+      description: custom environment to add to the dyno config vars
+      patternProperties:
+        ^\w+$:
+          type:
+          - string
+      readOnly: false
+      type:
+      - object
+    force_no_tty:
+      description: force an attached one-off dyno to not run in a tty
+      readOnly: false
+      type:
+      - boolean
+      - 'null'
+    time_to_live:
+      description: seconds until dyno expires, after which it will soon be killed, max 86400 seconds (24 hours)
+      readOnly: false
+      type:
+      - integer
+    formation:
+      description: The formation of processes that should be maintained for an app. Update the formation to scale processes
+        or change dyno sizes. Available process type names and commands are defined by the `process_types` attribute for the
+        [slug](#slug) currently released on an app.
+      type:
+      - object
+      properties:
+        app:
+          description: app formation belongs to
+          properties:
+            name:
+              $ref: '#/components/schemas/name'
+            id:
+              $ref: '#/components/schemas/id'
+          type:
+          - object
+        command:
+          $ref: '#/components/schemas/command'
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        dyno_size:
+          description: dyno size
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+          type:
+          - object
+        id:
+          $ref: '#/components/schemas/id'
+        quantity:
+          $ref: '#/components/schemas/quantity'
+        size:
+          $ref: '#/components/schemas/size'
+        type:
+          $ref: '#/components/schemas/type'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    quantity:
+      description: number of processes to maintain
+      readOnly: false
+      type:
+      - integer
+    dyno_size:
+      description: dyno size
+      oneOf:
+      - required:
+        - id
+      - required:
+        - name
+      properties:
+        id:
+          description: unique identifier of the dyno size
+          format: uuid
+          readOnly: true
+          type:
+          - string
+        name:
+          description: name of the dyno size
+          readOnly: true
+          type:
+          - string
+      readOnly: false
+      required:
+      - id
+      type:
+      - object
+    update:
+      additionalProperties: false
+      description: Properties to update a process type
+      properties:
+        dyno_size:
+          $ref: '#/components/schemas/dyno_size'
+        quantity:
+          $ref: '#/components/schemas/quantity'
+        type:
+          $ref: '#/components/schemas/type'
+      readOnly: false
+      required:
+      - type
+      type:
+      - object
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    dyno-size:
+      id: heroku.dynos.dyno-size
+      name: dyno-size
+      title: Dyno Size
+      methods:
+        Info:
+          operation:
+            $ref: '#/paths/~1dyno-sizes~1{dyno_size_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1dyno-sizes/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        ListAppDynoSizes:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1available-dyno-sizes/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/dyno-size/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/dyno-size/methods/List'
+        insert: []
+        update: []
+        delete: []
+        exec:
+        - $ref: '#/components/x-stackQL-resources/dyno-size/methods/ListAppDynoSizes'
+    dyno:
+      id: heroku.dynos.dyno
+      name: dyno
+      title: Dyno
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1dynos/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        RestartAll:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1dynos/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1dynos/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Restart:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1dynos~1{dyno_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1dynos~1{dyno_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        RestartFormation:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1formations~1{dyno_formation_type}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Stop:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1dynos~1{dyno_identity}~1actions~1stop/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        StopFormation:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1formations~1{dyno_formation_type}~1actions~1stop/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/List'
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/Info'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/Create'
+        update: []
+        delete: []
+        exec:
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/RestartAll'
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/Restart'
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/RestartFormation'
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/Stop'
+        - $ref: '#/components/x-stackQL-resources/dyno/methods/StopFormation'
+    formation:
+      id: heroku.dynos.formation
+      name: formation
+      title: Formation
+      methods:
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1formation~1{formation_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1formation~1{formation_identity}/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1formation/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        BatchUpdate:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1formation/patch'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/formation/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/formation/methods/List'
+        insert: []
+        update:
+        - $ref: '#/components/x-stackQL-resources/formation/methods/Update'
+        - $ref: '#/components/x-stackQL-resources/formation/methods/BatchUpdate'
+        delete: []
+        exec: []
+security:
+- herokuAuth: []

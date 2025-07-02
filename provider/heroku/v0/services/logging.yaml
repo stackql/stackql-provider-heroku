@@ -1,0 +1,446 @@
+openapi: 3.0.0
+info:
+  title: Heroku Platform API - Logging
+  description: The platform API empowers developers to automate, extend and combine Heroku with other services.
+  version: v0
+servers:
+- url: https://api.heroku.com
+paths:
+  /apps/{app_identity}/log-drains:
+    post:
+      summary: Create
+      description: Create a new log drain.
+      operationId: log_drainCreate
+      tags:
+      - logging
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/log-drain'
+      x-stackQL-resource: log-drain
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                url:
+                  $ref: '#/components/schemas/url'
+              required:
+              - url
+              type:
+              - object
+    get:
+      summary: List
+      description: List existing log drains.
+      operationId: log_drainList
+      tags:
+      - logging
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/log-drain'
+                type:
+                - array
+      x-stackQL-resource: log-drain
+      x-stackQL-method: List
+      x-stackQL-verb: select
+  /addons/{add_on_identity}/log-drains/{log_drain_query_identity}:
+    put:
+      summary: Update
+      description: Update an add-on owned log drain.
+      operationId: log_drainUpdate
+      tags:
+      - logging
+      parameters:
+      - name: add_on_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of add-on.
+      - name: log_drain_query_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for query_identity of log-drain.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/log-drain'
+      x-stackQL-resource: log-drain
+      x-stackQL-method: Update
+      x-stackQL-verb: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                url:
+                  $ref: '#/components/schemas/url'
+              required:
+              - url
+              type:
+              - object
+  /apps/{app_identity}/log-drains/{log_drain_query_identity}:
+    delete:
+      summary: Delete
+      description: Delete an existing log drain. Log drains added by add-ons can only be removed by removing the add-on.
+      operationId: log_drainDelete
+      tags:
+      - logging
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: log_drain_query_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for query_identity of log-drain.
+      responses:
+        '204':
+          description: No Content
+      x-stackQL-resource: log-drain
+      x-stackQL-method: Delete
+      x-stackQL-verb: delete
+    get:
+      summary: Info
+      description: Info for existing log drain.
+      operationId: log_drainInfo
+      tags:
+      - logging
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      - name: log_drain_query_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for query_identity of log-drain.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/log-drain'
+      x-stackQL-resource: log-drain
+      x-stackQL-method: Info
+      x-stackQL-verb: select
+  /addons/{add_on_identity}/log-drains:
+    get:
+      summary: List By Add-on
+      description: List existing log drains for an add-on.
+      operationId: log_drainListByAddOn
+      tags:
+      - logging
+      parameters:
+      - name: add_on_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of add-on.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/log-drain'
+                type:
+                - array
+      x-stackQL-resource: log-drain
+      x-stackQL-method: ListByAddOn
+      x-stackQL-verb: select
+  /apps/{app_identity}/log-sessions:
+    post:
+      summary: Create
+      description: Create a new log session.
+      operationId: log_sessionCreate
+      tags:
+      - logging
+      parameters:
+      - name: app_identity
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for identity of app.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/log-session'
+      x-stackQL-resource: log-session
+      x-stackQL-method: Create
+      x-stackQL-verb: insert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                dyno_name:
+                  $ref: '#/components/schemas/dyno_name'
+                type:
+                  $ref: '#/components/schemas/type'
+                lines:
+                  $ref: '#/components/schemas/lines'
+                source:
+                  $ref: '#/components/schemas/source'
+                tail:
+                  $ref: '#/components/schemas/tail'
+              type:
+              - object
+components:
+  schemas:
+    log-drain:
+      description: '[Log drains](https://devcenter.heroku.com/articles/log-drains) provide a way to forward your Heroku logs
+        to an external syslog server for long-term archiving. This external service must be configured to receive syslog packets
+        from Heroku, whereupon its URL can be added to an app using this API. Some add-ons will add a log drain when they
+        are provisioned to an app. These drains can only be removed by removing the add-on.'
+      type:
+      - object
+      properties:
+        addon:
+          $ref: '#/components/schemas/addon'
+        app:
+          $ref: '#/components/schemas/app'
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        token:
+          $ref: '#/components/schemas/token'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+        url:
+          $ref: '#/components/schemas/url'
+    addon:
+      description: add-on that created the drain
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+        app:
+          description: billing application associated with this add-on
+          type:
+          - object
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+      readOnly: true
+      type:
+      - object
+      - 'null'
+    id:
+      description: unique identifier of add-on
+      format: uuid
+      readOnly: true
+      type:
+      - string
+    name:
+      description: globally unique name of the add-on
+      pattern: ^[a-zA-Z][A-Za-z0-9_-]+$
+      type:
+      - string
+    app:
+      description: application that is attached to this drain
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          $ref: '#/components/schemas/name'
+      readOnly: true
+      type:
+      - object
+      - 'null'
+    created_at:
+      description: when log drain was created
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    token:
+      description: token associated with the log drain
+      readOnly: true
+      type:
+      - string
+    updated_at:
+      description: when log drain was updated
+      format: date-time
+      readOnly: true
+      type:
+      - string
+    url:
+      description: url associated with the log drain
+      readOnly: true
+      type:
+      - string
+    log-session:
+      description: A log session is a reference to the http based log stream for an app.
+      type:
+      - object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/created_at'
+        id:
+          $ref: '#/components/schemas/id'
+        logplex_url:
+          $ref: '#/components/schemas/logplex_url'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+    logplex_url:
+      description: URL for log streaming session
+      readOnly: true
+      type:
+      - string
+    dyno_name:
+      description: dyno name to limit results to
+      readOnly: false
+      type:
+      - string
+    type:
+      description: process type to limit results to
+      readOnly: false
+      type:
+      - string
+    lines:
+      description: number of log lines to stream at once
+      readOnly: false
+      type:
+      - integer
+    source:
+      description: log source to limit results to
+      readOnly: false
+      type:
+      - string
+    tail:
+      description: whether to stream ongoing logs
+      readOnly: false
+      type:
+      - boolean
+  securitySchemes:
+    herokuAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+  x-stackQL-resources:
+    log-drain:
+      id: heroku.logging.log-drain
+      name: log-drain
+      title: Log Drain
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1log-drains/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+        List:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1log-drains/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Update:
+          operation:
+            $ref: '#/paths/~1addons~1{add_on_identity}~1log-drains~1{log_drain_query_identity}/put'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        Delete:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1log-drains~1{log_drain_query_identity}/delete'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '204'
+        Info:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1log-drains~1{log_drain_query_identity}/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        ListByAddOn:
+          operation:
+            $ref: '#/paths/~1addons~1{add_on_identity}~1log-drains/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+        - $ref: '#/components/x-stackQL-resources/log-drain/methods/List'
+        - $ref: '#/components/x-stackQL-resources/log-drain/methods/Info'
+        - $ref: '#/components/x-stackQL-resources/log-drain/methods/ListByAddOn'
+        insert:
+        - $ref: '#/components/x-stackQL-resources/log-drain/methods/Create'
+        update:
+        - $ref: '#/components/x-stackQL-resources/log-drain/methods/Update'
+        delete:
+        - $ref: '#/components/x-stackQL-resources/log-drain/methods/Delete'
+        exec: []
+    log-session:
+      id: heroku.logging.log-session
+      name: log-session
+      title: Log Session
+      methods:
+        Create:
+          operation:
+            $ref: '#/paths/~1apps~1{app_identity}~1log-sessions/post'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '201'
+      sqlVerbs:
+        select: []
+        insert:
+        - $ref: '#/components/x-stackQL-resources/log-session/methods/Create'
+        update: []
+        delete: []
+        exec: []
+security:
+- herokuAuth: []
